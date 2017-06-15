@@ -12,4 +12,4 @@ $truncatedDebug = false;
 
 $showStoryUsername = "STORY_USERNAME";
 
- ?>
+?>
