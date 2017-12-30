@@ -42,21 +42,20 @@ $media = [ // Albums can contain between 2 and 10 photos/videos.
         'file'     => '', // Path to the video file.
     ],
 ];
-$captionText = ''; // Caption text to use for the album.
+$captionText = ''; // Caption to use for the album.
 //////////////////////
 
 $ig = new \InstagramAPI\Instagram($debug, $truncatedDebug);
 
 try {
-    $ig->setUser($username, $password);
-    $ig->login();
+    $ig->login($username, $password);
 } catch (\Exception $e) {
     echo 'Something went wrong: '.$e->getMessage()."\n";
     exit(0);
 }
 
 try {
-    $ig->uploadTimelineAlbum($media, ['caption' => $captionText]);
+    $ig->timeline->uploadAlbum($media, ['caption' => $captionText]);
 } catch (\Exception $e) {
     echo 'Something went wrong: '.$e->getMessage()."\n";
 }

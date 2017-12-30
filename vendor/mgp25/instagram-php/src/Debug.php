@@ -8,7 +8,7 @@ class Debug
         $method,
         $endpoint)
     {
-        if (php_sapi_name() == 'cli') {
+        if (PHP_SAPI === 'cli') {
             $method = Utils::colouredString("{$method}:  ", 'light_blue');
         } else {
             $method = $method.':  ';
@@ -19,7 +19,7 @@ class Debug
     public static function printUpload(
         $uploadBytes)
     {
-        if (php_sapi_name() == 'cli') {
+        if (PHP_SAPI === 'cli') {
             $dat = Utils::colouredString('→ '.$uploadBytes, 'yellow');
         } else {
             $dat = '→ '.$uploadBytes;
@@ -31,7 +31,7 @@ class Debug
         $httpCode,
         $bytes)
     {
-        if (php_sapi_name() == 'cli') {
+        if (PHP_SAPI === 'cli') {
             echo Utils::colouredString("← {$httpCode} \t {$bytes}", 'green')."\n";
         } else {
             echo "← {$httpCode} \t {$bytes}\n";
@@ -42,7 +42,7 @@ class Debug
         $response,
         $truncated = false)
     {
-        if (php_sapi_name() == 'cli') {
+        if (PHP_SAPI === 'cli') {
             $res = Utils::colouredString('RESPONSE: ', 'cyan');
         } else {
             $res = 'RESPONSE: ';
@@ -56,7 +56,7 @@ class Debug
     public static function printPostData(
         $post)
     {
-        if (php_sapi_name() == 'cli') {
+        if (PHP_SAPI === 'cli') {
             $dat = Utils::colouredString('DATA: ', 'yellow');
         } else {
             $dat = 'DATA: ';

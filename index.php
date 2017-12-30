@@ -4,14 +4,12 @@
 // naer (http://github.com/naer2/)
 
 require("config.php");
-
 $ig = new \InstagramAPI\Instagram($debug, $truncatedDebug);
 
 try {
-    $ig->setUser($username, $password);
-    $ig->login();
-    $userID = $ig->getUsernameId($showStoryUsername);
-    $storyFeed = $ig->getUserStoryFeed($userID);
+    $ig->login($username, $password);
+    $userID = $ig->people->getUserIdForName($showStoryUsername);
+    $storyFeed = $ig->story->getUserStoryFeed($userID);
     $storyCount= count($storyFeed->getReel()->getItems());
 
     for ($i=0; $i < $storyCount; $i++) {

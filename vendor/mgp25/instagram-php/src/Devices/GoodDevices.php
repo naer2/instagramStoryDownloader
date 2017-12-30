@@ -62,6 +62,11 @@ namespace InstagramAPI\Devices;
  * However, note that the device above isn't at least 1920x1080. Don't use it.
  *
  *
+ * When you have a "possibly good" agent, you must finally TEST IT: Use the
+ * "devtools/checkDevices.php" developer script to check your agent and verify
+ * that Instagram detects it as a high-resolution device and gives it HD videos!
+ *
+ *
  * LASTLY, YOU MUST UNDERSTAND THE FOLLOWING: THE DEVICE LIST BELOW IS MEANT TO
  * BE A "SNAPSHOT" OF DEVICES AND THEIR ANDROID VERSIONS AT THAT MOMENT IN TIME.
  * WE ARE *ONLY* SUPPOSED TO *ADD* NEW DEVICES TO IT OR COMPLETELY *DELETE* OLD
@@ -80,10 +85,33 @@ namespace InstagramAPI\Devices;
  * TO THIS LIST IF YOU DON'T UNDERSTAND *ALL* INSTRUCTIONS ABOVE. PERFECTLY. ALL
  * CONTRIBUTIONS MUST INCLUDE THE RELEASE DATE, HANDSETDETECTION AND A LINK TO A
  * PAGE (SUCH AS AMAZON) FOR THAT EXACT MODEL SPECIFIER, AS SEEN BELOW, SO THAT
- * WE CAN VALIDATE ALL AGENTS TO SEE THAT YOU AREN'T A MORON.
+ * WE CAN VALIDATE ALL AGENTS TO SEE THAT YOU AREN'T ADDING AN INCORRECTLY
+ * WRITTEN OR UNPOPULAR DEVICE AGENT WHICH WILL GET US BANNED BY INSTAGRAM!
  */
 class GoodDevices
 {
+    /**
+     * List of supported binary architectures for the device CPUs.
+     *
+     * NOTE TO COLLABORATORS: Currently all devices use the same 64-bit ARM list,
+     * but if future added devices have different CPU capabilities, this will need
+     * a rewrite to be able to specify different CPU_ABI values per-device. It's
+     * very unlikely to happen, though, since we only add 64-bit CPU devices to the
+     * list. And there's no real value to increasing ARM chip sizes beyond 64-bit
+     * since the physical address lines take up more space, and there are no real
+     * numerical benefits beyond 64-bit numbers. So we most likely won't need
+     * any per-device values here.
+     *
+     * Also note that the list below is actually the two 32-bit ARM identifiers.
+     * That's because Instagram is querying the 32-bit CPU_ABI1 and CPU_ABI2
+     * constants, so the below is the correct CPU_ABI value on our 64-bit devices.
+     *
+     * @see https://developer.android.com/ndk/guides/abis.html
+     *
+     * @var string
+     */
+    const CPU_ABI = 'armeabi-v7a:armeabi';
+
     /*
      * LAST-UPDATED: MARCH 2017.
      */

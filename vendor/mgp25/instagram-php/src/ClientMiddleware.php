@@ -109,6 +109,7 @@ class ClientMiddleware
         callable $handler)
     {
         $self = &$this;
+
         return function (
             RequestInterface $request,
             array $options

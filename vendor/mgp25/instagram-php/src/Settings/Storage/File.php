@@ -2,9 +2,10 @@
 
 namespace InstagramAPI\Settings\Storage;
 
-use InstagramAPI\Settings\StorageInterface;
-use InstagramAPI\Exception\SettingsException;
 use InstagramAPI\Constants;
+use InstagramAPI\Exception\SettingsException;
+use InstagramAPI\Settings\StorageInterface;
+use InstagramAPI\Utils;
 
 /**
  * Persistent storage backend which keeps settings in a reliable binary file.
@@ -34,39 +35,44 @@ class File implements StorageInterface
     /** @var string Path to the current user's cookie jar file. */
     private $_cookiesFile;
 
+    /** @var string Current Instagram username that all settings belong to. */
+    private $_username;
+
     /**
      * Connect to a storage location and perform necessary startup preparations.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function openLocation(
         array $locationConfig)
     {
         // Determine which base folder to store all per-user data in.
-        $this->_baseFolder = ((isset($locationConfig['basefolder'])
-                               && !empty($locationConfig['basefolder']))
-                              ? $locationConfig['basefolder']
-                              : Constants::SRC_DIR.'/../sessions/');
-        $this->_createFolder($this->_baseFolder);
+        $baseFolder = ((isset($locationConfig['basefolder'])
+                        && !empty($locationConfig['basefolder']))
+                       ? $locationConfig['basefolder']
+                       : Constants::SRC_DIR.'/../sessions');
+        // Create the base folder and normalize its path to a clean value.
+        $this->_baseFolder = $this->_createFolder($baseFolder);
     }
 
     /**
      * Whether the storage backend contains a specific user.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasUser(
         $username)
     {
         // Check whether the user's settings-file exists.
         $hasUser = $this->_generateUserPaths($username);
-        return (is_file($hasUser['settingsFile']) ? true : false);
+
+        return is_file($hasUser['settingsFile']) ? true : false;
     }
 
     /**
      * Move the internal data for a username to a new username.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function moveUser(
         $oldUsername,
@@ -99,37 +105,38 @@ class File implements StorageInterface
         }
         if (is_file($oldUser['cookiesFile'])
             && !@rename($oldUser['cookiesFile'], $newUser['cookiesFile'])) {
-            throw new CookiesException(sprintf(
+            throw new SettingsException(sprintf(
                 'Failed to move "%s" to "%s".',
                 $oldUser['cookiesFile'], $newUser['cookiesFile']
             ));
         }
 
         // Delete all files in the old folder, and the folder itself.
-        $this->_deleteTree($oldUser['userFolder']);
+        Utils::deleteTree($oldUser['userFolder']);
     }
 
     /**
      * Delete all internal data for a given username.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function deleteUser(
         $username)
     {
         // Delete all files in the user folder, and the folder itself.
         $delUser = $this->_generateUserPaths($username);
-        $this->_deleteTree($delUser['userFolder']);
+        Utils::deleteTree($delUser['userFolder']);
     }
 
     /**
      * Open the data storage for a specific user.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function openUser(
         $username)
     {
+        $this->_username = $username;
         $userPaths = $this->_generateUserPaths($username);
         $this->_userFolder = $userPaths['userFolder'];
         $this->_settingsFile = $userPaths['settingsFile'];
@@ -140,13 +147,13 @@ class File implements StorageInterface
     /**
      * Load all settings for the currently active user.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function loadUserSettings()
     {
         $userSettings = [];
 
-        if (!file_exists($this->_settingsFile)) {
+        if (!is_file($this->_settingsFile)) {
             return $userSettings; // Nothing to load.
         }
 
@@ -175,7 +182,7 @@ class File implements StorageInterface
     /**
      * Save the settings for the currently active user.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function saveUserSettings(
         array $userSettings,
@@ -192,57 +199,69 @@ class File implements StorageInterface
         // NOTE: If we had just written directly to settingsPath, the file would
         // have become corrupted if the script was killed mid-write. The atomic
         // write process guarantees that the data is fully written to disk.
-        $this->_atomicWrite($this->_settingsFile, $encodedData);
+        Utils::atomicWrite($this->_settingsFile, $encodedData);
     }
 
     /**
      * Whether the storage backend has cookies for the currently active user.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function hasUserCookies()
     {
-        return file_exists($this->_cookiesFile);
+        return is_file($this->_cookiesFile)
+            && filesize($this->_cookiesFile) > 0;
     }
 
     /**
-     * Load all cookies for the currently active user.
+     * Get the cookiefile disk path (only if a file-based cookie jar is wanted).
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
+     */
+    public function getUserCookiesFilePath()
+    {
+        // Tell the caller to use a file-based cookie jar.
+        return $this->_cookiesFile;
+    }
+
+    /**
+     * (Non-cookiefile) Load all cookies for the currently active user.
+     *
+     * {@inheritdoc}
      */
     public function loadUserCookies()
     {
-        // Tell the caller to use a file-based cookie jar.
-        return 'cookiefile:'.$this->_cookiesFile;
+        // Never called for "cookiefile" format.
     }
 
     /**
-     * Save all cookies for the currently active user.
+     * (Non-cookiefile) Save all cookies for the currently active user.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function saveUserCookies(
         $rawData)
     {
-        // Never called for "cookiefile:" format.
+        // Never called for "cookiefile" format.
     }
 
     /**
      * Close the settings storage for the currently active user.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function closeUser()
     {
         $this->_userFolder = null;
         $this->_settingsFile = null;
         $this->_cookiesFile = null;
+        $this->_username = null;
     }
 
     /**
      * Disconnect from a storage location and perform necessary shutdown steps.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function closeLocation()
     {
@@ -291,7 +310,6 @@ class File implements StorageInterface
              * Version 2 uses JSON encoding and perfectly stores any value.
              * And file corruption can't happen, thanks to the atomic writer.
              */
-
             $loadedSettings = @json_decode($rawData, true, 512, JSON_BIGINT_AS_STRING);
             if (!is_array($loadedSettings)) {
                 throw new SettingsException(sprintf(
@@ -311,40 +329,6 @@ class File implements StorageInterface
     }
 
     /**
-     * Atomic filewriter.
-     *
-     * Safely writes new contents to a file using an atomic two-step process.
-     * If the script is killed before the write is complete, only the temporary
-     * trash file will be corrupted.
-     *
-     * @param string $filename     Filename to write the data to.
-     * @param string $data         Data to write to file.
-     * @param string $atomicSuffix Lets you optionally provide a different
-     *                             suffix for the temporary file.
-     *
-     * @return mixed Number of bytes written on success, otherwise FALSE.
-     */
-    private function _atomicWrite(
-        $filename,
-        $data,
-        $atomicSuffix = 'atomictmp')
-    {
-        // Perform an exclusive (locked) overwrite to a temporary file.
-        $filenameTmp = sprintf('%s.%s', $filename, $atomicSuffix);
-        $writeResult = @file_put_contents($filenameTmp, $data, LOCK_EX);
-        if ($writeResult !== false) {
-            // Now move the file to its real destination (replaced if exists).
-            $moveResult = @rename($filenameTmp, $filename);
-            if ($moveResult === true) {
-                // Successful write and move. Return number of bytes written.
-                return $writeResult;
-            }
-        }
-
-        return false; // Failed.
-    }
-
-    /**
      * Generates all path strings for a given username.
      *
      * @param string $username The Instagram username.
@@ -354,9 +338,10 @@ class File implements StorageInterface
     private function _generateUserPaths(
         $username)
     {
-        $userFolder = $this->_baseFolder.'/'.$username.'/';
-        $settingsFile = $userFolder.sprintf(self::SETTINGSFILE_NAME, $username);
-        $cookiesFile = $userFolder.sprintf(self::COOKIESFILE_NAME, $username);
+        $userFolder = $this->_baseFolder.'/'.$username;
+        $settingsFile = $userFolder.'/'.sprintf(self::SETTINGSFILE_NAME, $username);
+        $cookiesFile = $userFolder.'/'.sprintf(self::COOKIESFILE_NAME, $username);
+
         return [
             'userFolder'   => $userFolder,
             'settingsFile' => $settingsFile,
@@ -370,56 +355,31 @@ class File implements StorageInterface
      * @param string $folder The directory path.
      *
      * @throws \InstagramAPI\Exception\SettingsException
+     *
+     * @return string The canonicalized absolute pathname of the folder, without
+     *                any trailing slash.
      */
     private function _createFolder(
         $folder)
     {
-        // Test write-permissions for the folder and create/fix if necessary.
-        if ((is_dir($folder) && is_writable($folder))
-            || (!is_dir($folder) && mkdir($folder, 0755, true))
-            || chmod($folder, 0755)) {
-            return;
-        } else {
+        if (!Utils::createFolder($folder)) {
             throw new SettingsException(sprintf(
                 'The "%s" folder is not writable.',
                 $folder
             ));
         }
-    }
 
-    /**
-     * Recursively deletes a file/directory tree.
-     *
-     * @param string $folder         The directory path.
-     * @param bool   $keepRootFolder Whether to keep the top-level folder.
-     *
-     * @return bool TRUE on success, otherwise FALSE.
-     */
-    private function _deleteTree(
-        $folder,
-        $keepRootFolder = false)
-    {
-        // Handle bad arguments.
-        if (empty($folder) || !file_exists($folder)) {
-            return true; // No such file/folder exists.
-        } elseif (is_file($folder) || is_link($folder)) {
-            return @unlink($folder); // Delete file/link.
+        // Determine the real path of the folder we created/checked.
+        // NOTE: This ensures that the path will work even on stingy systems
+        // such as Windows Server which chokes on multiple slashes in a row.
+        $realPath = @realpath($folder);
+        if (!is_string($realPath)) {
+            throw new SettingsException(sprintf(
+                'Unable to resolve real path to folder "%s".',
+                $folder
+            ));
         }
 
-        // Delete all children.
-        $files = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($folder, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
-        );
-
-        foreach ($files as $fileinfo) {
-            $action = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-            if (!@$action($fileinfo->getRealPath())) {
-                return false; // Abort due to the failure.
-            }
-        }
-
-        // Delete the root folder itself?
-        return (!$keepRootFolder ? @rmdir($folder) : true);
+        return $realPath;
     }
 }

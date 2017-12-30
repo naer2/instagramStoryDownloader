@@ -13,7 +13,8 @@ namespace InstagramAPI\Exception;
  * strings they want to catch in their own projects.
  *
  * Encapsulates ALL function-call specific problems such as "User not found"
- * and so on. To see what happened, simply getMessage() on this exception.
+ * and so on. To see what happened, simply getMessage() on this exception, or
+ * use hasResponse() and getResponse() to get the full server response.
  */
 class EndpointException extends RequestException
 {

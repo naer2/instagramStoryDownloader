@@ -20,7 +20,9 @@ date_default_timezone_set('UTC');
 
 require __DIR__.'/../vendor/autoload.php';
 
+use InstagramAPI\Constants;
 use InstagramAPI\Devices\Device;
+use InstagramAPI\Devices\DeviceInterface;
 use InstagramAPI\Devices\GoodDevices;
 
 $debug = false;
@@ -32,13 +34,11 @@ $ig = new \InstagramAPI\Instagram(
     false // Use non-truncated API debugging.
 );
 
-$ig->setUser($username, $password);
-$ig->login();
+$ig->login($username, $password);
 
 // Code for building video lists (uncomment both lines).
-// $userPk = $ig->getUserInfoByName('selenagomez')->getUser()->getPk();
-// buildVideoList($ig, $userPk); exit; // SelenaGomez (any random narcissist
-// will do for finding HD videos that are shot in idiotic portrait, haha)
+// $userPk = $ig->people->getInfoByName('selenagomez')->getUser()->getPk();
+// buildVideoList($ig, $userPk); exit;
 
 // List of good videos and resolutions that we MUST see with a GOOD user agent.
 // Manually created via buildVideoList() and the code above, by selecting some
@@ -94,7 +94,7 @@ $testDevices = array_merge(
 // any "bad devicestring" construction errors before wasting time.
 foreach ($testDevices as $key => $deviceString) {
     // Create the new Device object, without automatic fallbacks.
-    $testDevices[$key] = new Device($deviceString, false);
+    $testDevices[$key] = new Device(Constants::IG_VERSION, Constants::VERSION_CODE, Constants::USER_AGENT_LOCALE, $deviceString, false);
 }
 
 // Test all devices in our list!
@@ -113,7 +113,7 @@ foreach ($testDevices as $thisDevice) {
         // Retrieve video info (with 4 total attempts in case of throttling).
         for ($attempt = 1; $attempt <= 4; ++$attempt) {
             try {
-                $mediaInfo = $ig->getMediaInfo($videoId)->getItems()[0];
+                $mediaInfo = $ig->media->getInfo($videoId)->getItems()[0];
                 break;
             } catch (\InstagramAPI\Exception\ThrottledException $e) {
                 if ($attempt < 4) {
@@ -153,11 +153,16 @@ foreach ($testDevices as $thisDevice) {
 
 /**
  * Changes the user-agent sent by the InstagramAPI library.
+ *
+ * @param \InstagramAPI\Instagram $ig
+ * @param DeviceInterface|string  $value
  */
-function switchDevice($ig, $value)
+function switchDevice(
+    $ig,
+    $value)
 {
     // Create the new Device object, without automatic fallbacks.
-    $device = ($value instanceof Device ? $value : new Device($value, false));
+    $device = ($value instanceof DeviceInterface ? $value : new Device(Constants::IG_VERSION, Constants::VERSION_CODE, Constants::USER_AGENT_LOCALE, $value, false));
 
     // Update the Instagram Client's User-Agent to the new Device.
     $ig->device = $device;
@@ -187,8 +192,13 @@ function switchDevice($ig, $value)
  * they will RESIZE them to no more than 640 pixels WIDE. Perhaps they will
  * someday allow 1080-width playback, in which case we will have to test and
  * revise all device identifiers again to make sure they all see the best URLs.
+ *
+ * @param \InstagramAPI\Instagram $ig
+ * @param string                  $userPk
  */
-function buildVideoList($ig, $userPk)
+function buildVideoList(
+    $ig,
+    $userPk)
 {
     // We must use a good device to get answers when scanning for HD videos.
     switchDevice($ig, GoodDevices::getRandomGoodDevice());
@@ -196,7 +206,7 @@ function buildVideoList($ig, $userPk)
     echo "[\n";
     $maxId = null;
     do {
-        $feed = $ig->getUserFeed($userPk, $maxId);
+        $feed = $ig->timeline->getUserFeed($userPk, $maxId);
         foreach ($feed->getItems() as $item) {
             if ($item->getMediaType() != \InstagramAPI\Response\Model\Item::VIDEO) {
                 continue;

@@ -2,8 +2,6 @@
 
 namespace InstagramAPI\Settings;
 
-use InstagramAPI\Exception\SettingsException;
-
 /**
  * Data Storage Interface.
  *
@@ -177,6 +175,13 @@ interface StorageInterface
     /**
      * Whether the storage backend has cookies for the currently active user.
      *
+     * Even cookiefile (file-based jars) MUST answer this question, for example
+     * by checking if their desired cookiefile exists and is non-empty. And all
+     * other storage backends (such as databases) MUST also verify that their
+     * existing cookie data is non-empty.
+     *
+     * Don't validate the actual cookie contents, just look for non-zero size!
+     *
      * @throws \InstagramAPI\Exception\SettingsException
      *
      * @return bool TRUE if cookies exist, otherwise FALSE.
@@ -184,30 +189,41 @@ interface StorageInterface
     public function hasUserCookies();
 
     /**
-     * Load all cookies for the currently active user.
+     * Get the cookiefile disk path (only if a file-based cookie jar is wanted).
      *
-     * If a "cookiefile:[path]" string is returned, the Settings class will use
-     * a file-based cookie jar which IT will write to that location. In that
-     * case, the Storage class MUST AVOID writing to it, to avoid corruption!
-     *
-     * Otherwise, simply return the raw cookie data that we previously gave to
-     * the storage during a previous session, or an EMPTY STRING (or NULL) if no
-     * cookie data exists in the storage yet.
+     * The file does not have to exist yet. It will be created by the caller
+     * on-demand when necessary.
      *
      * @throws \InstagramAPI\Exception\SettingsException
      *
-     * @return string|null Either a "cookiefile:[path]" string to use a file-
-     *                     based cookie jar, otherwise a previously-stored raw
-     *                     cookie data string, or an empty string/NULL if no
-     *                     data exists in the storage yet.
+     * @return string|null Either a non-empty string file-path to use a
+     *                     file-based cookie jar which the CALLER will
+     *                     read/write, otherwise NULL (or any other
+     *                     non-string value) if the BACKEND wants to
+     *                     handle the cookies itself.
+     */
+    public function getUserCookiesFilePath();
+
+    /**
+     * (Non-cookiefile) Load all cookies for the currently active user.
+     *
+     * Note that this function is ONLY called if a non-string answer was
+     * returned by the getUserCookiesFilePath() call.
+     *
+     * If your Storage backend class uses a cookiefile, make this a no-op.
+     *
+     * @throws \InstagramAPI\Exception\SettingsException
+     *
+     * @return string|null A previously-stored raw cookie data string, or an
+     *                     empty string/NULL if no data exists in the storage.
      */
     public function loadUserCookies();
 
     /**
-     * Save all cookies for the currently active user.
+     * (Non-cookiefile) Save all cookies for the currently active user.
      *
      * Note that this function is called frequently! But it is ONLY called if a
-     * non-"cookiefile:" answer was returned by the loadUserCookies() call.
+     * non-string answer was returned by the getUserCookiesFilePath() call.
      *
      * If your Storage backend class uses a cookiefile, make this a no-op.
      *

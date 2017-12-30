@@ -7,7 +7,7 @@ namespace InstagramAPI\Devices;
  *
  * @author SteveJobzniak (https://github.com/SteveJobzniak)
  */
-class Device
+class Device implements DeviceInterface
 {
     /**
      * The Android version of Instagram currently runs on Android OS 2.2+.
@@ -19,6 +19,27 @@ class Device
      * @see https://help.instagram.com/513067452056347
      */
     const REQUIRED_ANDROID_VERSION = '2.2';
+
+    /**
+     * Which Instagram client app version this "device" is running.
+     *
+     * @var string
+     */
+    protected $_appVersion;
+
+    /**
+     * Which Instagram client app version code this "device" is running.
+     *
+     * @var string
+     */
+    protected $_versionCode;
+
+    /**
+     * The device user's locale, such as "en_US".
+     *
+     * @var string
+     */
+    protected $_userLocale;
 
     /**
      * Which device string we were built with internally.
@@ -33,6 +54,13 @@ class Device
      * @var string
      */
     protected $_userAgent;
+
+    /**
+     * The FB user agents to use for this device. Built from properties.
+     *
+     * @var array
+     */
+    protected $_fbUserAgents;
 
     // Properties parsed from the device string...
 
@@ -66,6 +94,9 @@ class Device
     /**
      * Constructor.
      *
+     * @param string      $appVersion   Instagram client app version.
+     * @param string      $versionCode  Instagram client app version code.
+     * @param string      $userLocale   The user's locale, such as "en_US".
      * @param string|null $deviceString (optional) The device string to attempt
      *                                  to construct from. If NULL or not a good
      *                                  device, we'll use a random good device.
@@ -74,9 +105,16 @@ class Device
      * @throws \RuntimeException If fallback is disabled and device is invalid.
      */
     public function __construct(
+        $appVersion,
+        $versionCode,
+        $userLocale,
         $deviceString = null,
         $autoFallback = true)
     {
+        $this->_appVersion = $appVersion;
+        $this->_versionCode = $versionCode;
+        $this->_userLocale = $userLocale;
+
         // Use the provided device if a valid good device. Otherwise use random.
         if ($autoFallback && (!is_string($deviceString) || !GoodDevices::isGoodDevice($deviceString))) {
             $deviceString = GoodDevices::getRandomGoodDevice();
@@ -138,61 +176,91 @@ class Device
         $this->_cpu = $parts[6];
 
         // Build our user agent.
-        $this->_userAgent = UserAgent::buildUserAgent($this);
+        $this->_userAgent = UserAgent::buildUserAgent($this->_appVersion, $this->_userLocale, $this);
+
+        $this->_fbUserAgents = [];
     }
 
     // Getters for all properties...
 
+    /** {@inheritdoc} */
     public function getDeviceString()
     {
         return $this->_deviceString;
     }
 
+    /** {@inheritdoc} */
     public function getUserAgent()
     {
         return $this->_userAgent;
     }
 
+    /** {@inheritdoc} */
+    public function getFbUserAgent(
+        $appName)
+    {
+        if (!isset($this->_fbUserAgents[$appName])) {
+            $this->_fbUserAgents[$appName] = UserAgent::buildFbUserAgent(
+                $appName,
+                $this->_appVersion,
+                $this->_versionCode,
+                $this->_userLocale,
+                $this
+            );
+        }
+
+        return $this->_fbUserAgents[$appName];
+    }
+
+    /** {@inheritdoc} */
     public function getAndroidVersion()
     {
         return $this->_androidVersion;
     }
 
+    /** {@inheritdoc} */
     public function getAndroidRelease()
     {
         return $this->_androidRelease;
     }
 
+    /** {@inheritdoc} */
     public function getDPI()
     {
         return $this->_dpi;
     }
 
+    /** {@inheritdoc} */
     public function getResolution()
     {
         return $this->_resolution;
     }
 
+    /** {@inheritdoc} */
     public function getManufacturer()
     {
         return $this->_manufacturer;
     }
 
+    /** {@inheritdoc} */
     public function getBrand()
     {
         return $this->_brand;
     }
 
+    /** {@inheritdoc} */
     public function getModel()
     {
         return $this->_model;
     }
 
+    /** {@inheritdoc} */
     public function getDevice()
     {
         return $this->_device;
     }
 
+    /** {@inheritdoc} */
     public function getCPU()
     {
         return $this->_cpu;
