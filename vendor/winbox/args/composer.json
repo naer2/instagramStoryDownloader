@@ -1,0 +1,22 @@
+{
+    "name": "winbox/args",
+    "description": "Windows command-line formatter",
+    "keywords": ["windows", "escape", "command"],
+    "homepage": "http://github.com/johnstevenson/winbox-args",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+        "name": "John Stevenson",
+        "email": "john-stevenson@blueyonder.co.uk"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Winbox\\": "src/"
+        }
+    }
+}

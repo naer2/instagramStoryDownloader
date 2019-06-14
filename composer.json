@@ -1,5 +1,5 @@
 {
     "require": {
-        "mgp25/instagram-php": "dev-master"
+        "mgp25/instagram-php": "^6.0"
     }
 }
