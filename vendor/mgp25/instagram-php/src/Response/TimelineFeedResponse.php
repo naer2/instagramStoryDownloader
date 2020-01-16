@@ -20,6 +20,7 @@ use InstagramAPI\Response;
  * @method string getNextMaxId()
  * @method int getNumResults()
  * @method mixed getPaginationInfo()
+ * @method mixed getStartupPrefetchConfigs()
  * @method string getStatus()
  * @method string getViewStateVersion()
  * @method Model\_Message[] get_Messages()
@@ -36,6 +37,7 @@ use InstagramAPI\Response;
  * @method bool isNextMaxId()
  * @method bool isNumResults()
  * @method bool isPaginationInfo()
+ * @method bool isStartupPrefetchConfigs()
  * @method bool isStatus()
  * @method bool isViewStateVersion()
  * @method bool is_Messages()
@@ -52,6 +54,7 @@ use InstagramAPI\Response;
  * @method $this setNextMaxId(string $value)
  * @method $this setNumResults(int $value)
  * @method $this setPaginationInfo(mixed $value)
+ * @method $this setStartupPrefetchConfigs(mixed $value)
  * @method $this setStatus(string $value)
  * @method $this setViewStateVersion(string $value)
  * @method $this set_Messages(Model\_Message[] $value)
@@ -68,6 +71,7 @@ use InstagramAPI\Response;
  * @method $this unsetNextMaxId()
  * @method $this unsetNumResults()
  * @method $this unsetPaginationInfo()
+ * @method $this unsetStartupPrefetchConfigs()
  * @method $this unsetStatus()
  * @method $this unsetViewStateVersion()
  * @method $this unset_Messages()
@@ -89,5 +93,6 @@ class TimelineFeedResponse extends Response
         'feed_pill_text'                 => 'string',
         'client_gap_enforcer_matrix'     => '',
         'client_session_id'              => 'string',
+        'startup_prefetch_configs'       => '',
     ];
 }

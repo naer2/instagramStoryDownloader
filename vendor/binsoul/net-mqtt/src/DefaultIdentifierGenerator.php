@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt;
 
 /**
- * Provides a default implementation of the {@see IdentifierGenerator} interface.
+ * Provides a default implementation of the {@see PacketIdentifierGenerator} and the {@see ClientIdentifierGenerator} interface.
  */
-class DefaultIdentifierGenerator implements IdentifierGenerator
+class DefaultIdentifierGenerator implements PacketIdentifierGenerator, ClientIdentifierGenerator
 {
     /** @var int */
     private $currentIdentifier = 0;
 
-    public function generatePacketID()
+    public function generatePacketIdentifier(): int
     {
         ++$this->currentIdentifier;
         if ($this->currentIdentifier > 0xFFFF) {
@@ -20,13 +22,11 @@ class DefaultIdentifierGenerator implements IdentifierGenerator
         return $this->currentIdentifier;
     }
 
-    public function generateClientID()
+    public function generateClientIdentifier(): string
     {
-        if (function_exists('random_bytes')) {
+        try {
             $data = random_bytes(9);
-        } elseif (function_exists('openssl_random_pseudo_bytes')) {
-            $data = openssl_random_pseudo_bytes(9);
-        } else {
+        } catch (\Exception $e) {
             $data = '';
             for ($i = 1; $i <= 8; ++$i) {
                 $data = chr(mt_rand(0, 255)).$data;

@@ -30,6 +30,15 @@ class InstagramPhoto extends InstagramMedia
     const JPEG_QUALITY = 95;
 
     /**
+     * Scale factor for the bluring operation.
+     *
+     * The source image will be expand to the canvas and scaled down before filtering.
+     *
+     * @var float
+     */
+    const BLUR_IMAGE_SCALE = 0.5;
+
+    /**
      * Constructor.
      *
      * @param string $inputFile Path to an input file.
@@ -161,8 +170,47 @@ class InstagramPhoto extends InstagramMedia
         if ($bgColor === false) {
             throw new \RuntimeException('Failed to allocate background color.');
         }
-        if (imagefilledrectangle($output, 0, 0, $canvas->getWidth() - 1, $canvas->getHeight() - 1, $bgColor) === false) {
-            throw new \RuntimeException('Failed to fill image with background color.');
+
+        // If expanding and blurredBorder, use the photo as a blurred border.
+        if ($this->_blurredBorder && $this->_operation === self::EXPAND) {
+            // Calculate the rectangle
+            $blurImageRect = $this->_calculateBlurImage($srcRect, $canvas);
+            $scaleDownRect = $blurImageRect->withRescaling(self::BLUR_IMAGE_SCALE, 'ceil');
+
+            // Create a canvas for the scaled image
+            $scaledDownImage = imagecreatetruecolor($scaleDownRect->getWidth(), $scaleDownRect->getHeight());
+            if ($scaledDownImage === false) {
+                throw new \RuntimeException('Failed to create scaled down image.');
+            }
+
+            // Copy the image to the scaled canvas
+            if (imagecopyresampled(
+                $scaledDownImage, $source,
+                0, 0,
+                $blurImageRect->getX(), $blurImageRect->getY(),
+                $scaleDownRect->getWidth(), $scaleDownRect->getHeight(),
+                $blurImageRect->getWidth(), $blurImageRect->getHeight()) === false) {
+                throw new \RuntimeException('Failed to resample blur image.');
+            }
+
+            //Blur the scaled canvas
+            for ($i = 0; $i < 40; ++$i) {
+                imagefilter($scaledDownImage, IMG_FILTER_GAUSSIAN_BLUR, 999);
+            }
+
+            //Copy the blurred image to the output canvas.
+            if (imagecopyresampled(
+                $output, $scaledDownImage,
+                0, 0,
+                0, 0,
+                $canvas->getWidth(), $canvas->getHeight(),
+                $scaleDownRect->getWidth(), $scaleDownRect->getHeight()) === false) {
+                throw new \RuntimeException('Failed to resample blurred image.');
+            }
+        } else {
+            if (imagefilledrectangle($output, 0, 0, $canvas->getWidth() - 1, $canvas->getHeight() - 1, $bgColor) === false) {
+                throw new \RuntimeException('Failed to fill image with background color.');
+            }
         }
 
         // Copy the resized (and resampled) image onto the new canvas.
@@ -180,6 +228,37 @@ class InstagramPhoto extends InstagramMedia
         $output = $this->_rotateResource($output, $bgColor);
 
         return $output;
+    }
+
+    /**
+     * Calculates the rectangle of the blur image source.
+     *
+     * @param Rectangle  $srcRect
+     * @param Dimensions $canvas
+     *
+     * @return Rectangle
+     */
+    protected function _calculateBlurImage(
+        Rectangle $srcRect,
+        Dimensions $canvas)
+    {
+        $widthScale = (float) ($canvas->getWidth() / $srcRect->getWidth());
+        $heightScale = (float) ($canvas->getHeight() / $srcRect->getHeight());
+        if ($widthScale > $heightScale) {
+            $resX = $srcRect->getX();
+            $resW = $srcRect->getWidth();
+            $resH = (float) $canvas->getHeight() / $widthScale;
+            $resY = (int) floor(($srcRect->getHeight() - $resH) / 2);
+
+            return new Rectangle($resX, $resY, $resW, $resH);
+        } else {
+            $resY = $srcRect->getY();
+            $resH = $srcRect->getHeight();
+            $resW = (float) $canvas->getWidth() / $heightScale;
+            $resX = (int) floor(($srcRect->getWidth() - $resW) / 2);
+
+            return new Rectangle($resX, $resY, $resW, $resH);
+        }
     }
 
     /**

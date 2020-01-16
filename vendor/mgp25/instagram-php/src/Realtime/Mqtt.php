@@ -5,7 +5,7 @@ namespace InstagramAPI\Realtime;
 use BinSoul\Net\Mqtt\Client\React\ReactMqttClient;
 use BinSoul\Net\Mqtt\DefaultConnection;
 use BinSoul\Net\Mqtt\DefaultMessage;
-use BinSoul\Net\Mqtt\Message;
+use BinSoul\Net\Mqtt\Message as MqttMessage;
 use Evenement\EventEmitterInterface;
 use Fbns\Client\AuthInterface;
 use InstagramAPI\Constants;
@@ -607,7 +607,7 @@ class Mqtt implements PersistentInterface
             $this->_logger->debug('Publish flow completed');
             $this->_setKeepaliveTimer();
         });
-        $client->on('message', function (Message $message) {
+        $client->on('message', function (MqttMessage $message) {
             $this->_setKeepaliveTimer();
             $this->_onReceive($message);
         });
@@ -726,10 +726,10 @@ class Mqtt implements PersistentInterface
     /**
      * Incoming message handler.
      *
-     * @param Message $msg
+     * @param MqttMessage $msg
      */
     protected function _onReceive(
-        Message $msg)
+        MqttMessage $msg)
     {
         $payload = @zlib_decode($msg->getPayload());
         if ($payload === false) {

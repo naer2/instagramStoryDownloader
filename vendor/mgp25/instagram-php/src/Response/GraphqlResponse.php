@@ -30,6 +30,46 @@ class GraphqlResponse extends Response
         'data'            => 'Model\GraphData',
     ];
 
+    public function getGenderGraphData()
+    {
+        return $this->_getProperty('data')->getUser()->getBusinessManager()->getFollowersUnit()->getGenderGraph();
+    }
+
+    public function getAllAgeGraphData()
+    {
+        return $this->_getProperty('data')->getUser()->getBusinessManager()->getFollowersUnit()->getAllFollowersAgeGraph();
+    }
+
+    public function getMenAgeGraphData()
+    {
+        return $this->_getProperty('data')->getUser()->getBusinessManager()->getFollowersUnit()->getMenFollowersAgeGraph();
+    }
+
+    public function getWomenAgeGraphData()
+    {
+        return $this->_getProperty('data')->getUser()->getBusinessManager()->getFollowersUnit()->getWomenFollowersAgeGraph();
+    }
+
+    public function getFollowersTopCities()
+    {
+        return $this->_getProperty('data')->getUser()->getBusinessManager()->getFollowersUnit()->getFollowersTopCitiesGraph();
+    }
+
+    public function getFollowersTopCountries()
+    {
+        return $this->_getProperty('data')->getUser()->getBusinessManager()->getFollowersUnit()->getFollowersTopCountriesGraph();
+    }
+
+    public function getDailyWeekFollowersGraphData()
+    {
+        return $this->_getProperty('data')->getUser()->getBusinessManager()->getFollowersUnit()->getWeekDailyFollowersGraph();
+    }
+
+    public function getDaysHourlyFollowersGraphData()
+    {
+        return $this->_getProperty('data')->getUser()->getBusinessManager()->getFollowersUnit()->getDaysHourlyFollowersGraph();
+    }
+
     /**
      * Checks if the response was successful.
      *

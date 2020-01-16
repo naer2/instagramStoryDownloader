@@ -28,6 +28,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method string getParentCommentId()
  * @method string getPk()
  * @method Comment[] getPreviewChildComments()
+ * @method bool getShareEnabled()
  * @method string getStatus()
  * @method string getText()
  * @method int getType()
@@ -54,6 +55,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isParentCommentId()
  * @method bool isPk()
  * @method bool isPreviewChildComments()
+ * @method bool isShareEnabled()
  * @method bool isStatus()
  * @method bool isText()
  * @method bool isType()
@@ -80,6 +82,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setParentCommentId(string $value)
  * @method $this setPk(string $value)
  * @method $this setPreviewChildComments(Comment[] $value)
+ * @method $this setShareEnabled(bool $value)
  * @method $this setStatus(string $value)
  * @method $this setText(string $value)
  * @method $this setType(int $value)
@@ -106,6 +109,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetParentCommentId()
  * @method $this unsetPk()
  * @method $this unsetPreviewChildComments()
+ * @method $this unsetShareEnabled()
  * @method $this unsetStatus()
  * @method $this unsetText()
  * @method $this unsetType()
@@ -153,6 +157,7 @@ class Comment extends AutoPropertyMapper
         'has_liked_comment'                 => 'bool',
         'has_translation'                   => 'bool',
         'did_report_as_spam'                => 'bool',
+        'share_enabled'                     => 'bool',
         /*
          * If this is a child in a thread, this is the ID of its parent thread.
          */

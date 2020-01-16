@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt;
 
 /**
@@ -12,35 +14,35 @@ interface Message
      *
      * @return string
      */
-    public function getTopic();
+    public function getTopic(): string;
 
     /**
      * Returns the payload.
      *
      * @return string
      */
-    public function getPayload();
+    public function getPayload(): string;
 
     /**
      * Returns the quality of service level.
      *
      * @return int
      */
-    public function getQosLevel();
+    public function getQosLevel(): int;
 
     /**
      * Indicates if the message is a duplicate.
      *
      * @return bool
      */
-    public function isDuplicate();
+    public function isDuplicate(): bool;
 
     /**
      * Indicates if the message is retained.
      *
      * @return bool
      */
-    public function isRetained();
+    public function isRetained(): bool;
 
     /**
      * Returns a new message with the given topic.
@@ -49,7 +51,7 @@ interface Message
      *
      * @return self
      */
-    public function withTopic($topic);
+    public function withTopic(string $topic): Message;
 
     /**
      * Returns a new message with the given payload.
@@ -58,7 +60,7 @@ interface Message
      *
      * @return self
      */
-    public function withPayload($payload);
+    public function withPayload(string $payload): Message;
 
     /**
      * Returns a new message with the given quality of service level.
@@ -67,33 +69,33 @@ interface Message
      *
      * @return self
      */
-    public function withQosLevel($level);
+    public function withQosLevel(int $level): Message;
 
     /**
      * Returns a new message flagged as retained.
      *
      * @return self
      */
-    public function retain();
+    public function retain(): Message;
 
     /**
      * Returns a new message flagged as not retained.
      *
      * @return self
      */
-    public function release();
+    public function release(): Message;
 
     /**
      * Returns a new message flagged as duplicate.
      *
      * @return self
      */
-    public function duplicate();
+    public function duplicate(): Message;
 
     /**
      * Returns a new message flagged as original.
      *
      * @return self
      */
-    public function original();
+    public function original(): Message;
 }

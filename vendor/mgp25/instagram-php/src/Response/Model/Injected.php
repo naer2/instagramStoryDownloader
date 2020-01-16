@@ -10,6 +10,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method string getAboutAdParams()
  * @method string getAdId()
  * @method string getAdTitle()
+ * @method mixed getAdsDebugInfo()
  * @method string[] getCookies()
  * @method bool getDirectShare()
  * @method bool getDisplayViewabilityEligible()
@@ -20,6 +21,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method mixed getInvalidation()
  * @method bool getIsDemo()
  * @method bool getIsHoldout()
+ * @method bool getIsLeadgenNativeEligible()
  * @method string getLabel()
  * @method string getLeadGenFormId()
  * @method bool getShowAdChoices()
@@ -29,6 +31,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isAboutAdParams()
  * @method bool isAdId()
  * @method bool isAdTitle()
+ * @method bool isAdsDebugInfo()
  * @method bool isCookies()
  * @method bool isDirectShare()
  * @method bool isDisplayViewabilityEligible()
@@ -39,6 +42,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isInvalidation()
  * @method bool isIsDemo()
  * @method bool isIsHoldout()
+ * @method bool isIsLeadgenNativeEligible()
  * @method bool isLabel()
  * @method bool isLeadGenFormId()
  * @method bool isShowAdChoices()
@@ -48,6 +52,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setAboutAdParams(string $value)
  * @method $this setAdId(string $value)
  * @method $this setAdTitle(string $value)
+ * @method $this setAdsDebugInfo(mixed $value)
  * @method $this setCookies(string[] $value)
  * @method $this setDirectShare(bool $value)
  * @method $this setDisplayViewabilityEligible(bool $value)
@@ -58,6 +63,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setInvalidation(mixed $value)
  * @method $this setIsDemo(bool $value)
  * @method $this setIsHoldout(bool $value)
+ * @method $this setIsLeadgenNativeEligible(bool $value)
  * @method $this setLabel(string $value)
  * @method $this setLeadGenFormId(string $value)
  * @method $this setShowAdChoices(bool $value)
@@ -67,6 +73,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetAboutAdParams()
  * @method $this unsetAdId()
  * @method $this unsetAdTitle()
+ * @method $this unsetAdsDebugInfo()
  * @method $this unsetCookies()
  * @method $this unsetDirectShare()
  * @method $this unsetDisplayViewabilityEligible()
@@ -77,6 +84,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetInvalidation()
  * @method $this unsetIsDemo()
  * @method $this unsetIsHoldout()
+ * @method $this unsetIsLeadgenNativeEligible()
  * @method $this unsetLabel()
  * @method $this unsetLeadGenFormId()
  * @method $this unsetShowAdChoices()
@@ -94,6 +102,7 @@ class Injected extends AutoPropertyMapper
         'is_demo'                      => 'bool',
         'view_tags'                    => '', // Only seen as [].
         'is_holdout'                   => 'bool',
+        'is_leadgen_native_eligible'   => 'bool',
         'tracking_token'               => 'string',
         'show_ad_choices'              => 'bool',
         'ad_title'                     => 'string',
@@ -106,5 +115,6 @@ class Injected extends AutoPropertyMapper
         'hide_flow_type'               => 'int',
         'cookies'                      => 'string[]',
         'lead_gen_form_id'             => 'string',
+        'ads_debug_info'               => '',
     ];
 }

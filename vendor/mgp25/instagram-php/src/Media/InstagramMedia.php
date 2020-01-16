@@ -77,6 +77,9 @@ abstract class InstagramMedia
     /** @var array Background color [R, G, B] for the final media. */
     protected $_bgColor;
 
+    /** @var bool Whether to use the media as a blurred border. */
+    protected $_blurredBorder;
+
     /** @var int Operation to perform on the media. */
     protected $_operation;
 
@@ -176,6 +179,9 @@ abstract class InstagramMedia
      * - "bgColor" (array) - Array with 3 color components `[R, G, B]`
      *   (0-255/0x00-0xFF) for the background. Uses white if not set.
      *
+     * - "blurredBorder" (bool) - Whether to use the media as a blurred border.
+     *   False if not set.
+     *
      * - "operation" (int) - Operation to perform on the media (CROP or EXPAND).
      *   Uses `self::CROP` if not set.
      *
@@ -205,6 +211,7 @@ abstract class InstagramMedia
         $useRecommendedRatio = isset($options['useRecommendedRatio']) ? (bool) $options['useRecommendedRatio'] : null;
         $allowNewAspectDeviation = isset($options['allowNewAspectDeviation']) ? (bool) $options['allowNewAspectDeviation'] : false;
         $bgColor = isset($options['bgColor']) ? $options['bgColor'] : null;
+        $blurredBorder = isset($options['blurredBorder']) ? (bool) $options['blurredBorder'] : false;
         $operation = isset($options['operation']) ? $options['operation'] : self::CROP;
         $tmpPath = isset($options['tmpPath']) ? (string) $options['tmpPath'] : null;
         $debug = isset($options['debug']) ? $options['debug'] : false;
@@ -321,6 +328,9 @@ abstract class InstagramMedia
             $bgColor = [255, 255, 255]; // White.
         }
         $this->_bgColor = $bgColor;
+
+        //Blurred border
+        $this->_blurredBorder = $blurredBorder;
 
         // Media operation.
         if ($operation !== self::CROP && $operation !== self::EXPAND) {

@@ -6,6 +6,8 @@ use InstagramAPI\Constants;
 use InstagramAPI\Exception\InstagramException;
 use InstagramAPI\Exception\ThrottledException;
 use InstagramAPI\Exception\UploadFailedException;
+use InstagramAPI\Media\Constraints\ConstraintsFactory;
+use InstagramAPI\Media\Photo\PhotoDetails;
 use InstagramAPI\Request\Metadata\Internal as InternalMetadata;
 use InstagramAPI\Response;
 use InstagramAPI\Signatures;
@@ -25,20 +27,37 @@ class Direct extends RequestCollection
     /**
      * Get direct inbox messages for your account.
      *
-     * @param string|null $cursorId Next "cursor ID", used for pagination.
+     * @param string|null $cursorId           Next "cursor ID", used for pagination.
+     * @param int         $limit              Number of threads. From 0 to 20.
+     * @param int|null    $threadMessageLimit (optional) Number of messages per thread
+     * @param bool        $prefetch           (optional) Indicates if the request is called from prefetch.
      *
+     * @throws \InvalidArgumentException
      * @throws \InstagramAPI\Exception\InstagramException
      *
      * @return \InstagramAPI\Response\DirectInboxResponse
      */
     public function getInbox(
-        $cursorId = null)
+        $cursorId = null,
+        $limit = 0,
+        $threadMessageLimit = null,
+        $prefetch = false)
     {
+        if ($limit < 0 || $limit > 20) {
+            throw new \InvalidArgumentException('Invalid value provided to limit.');
+        }
         $request = $this->ig->request('direct_v2/inbox/')
             ->addParam('persistentBadging', 'true')
-            ->addParam('use_unified_inbox', 'true');
+            ->addParam('visual_message_return_type', 'unseen')
+            ->addParam('limit', $limit);
         if ($cursorId !== null) {
             $request->addParam('cursor', $cursorId);
+        }
+        if ($prefetch) {
+            $request->addHeader('X-IG-Prefetch-Request', 'foreground');
+        }
+        if ($threadMessageLimit !== null) {
+            $request->addParam('thread_message_limit', $threadMessageLimit);
         }
 
         return $request->getResponse(new Response\DirectInboxResponse());
@@ -582,6 +601,11 @@ class Direct extends RequestCollection
             throw new \InvalidArgumentException(sprintf('File "%s" is not available for reading.', $photoFilename));
         }
 
+        // validate width, height and aspect ratio of photo
+        $photoDetails = new PhotoDetails($photoFilename);
+        $photoDetails->validate(ConstraintsFactory::createFor(Constants::FEED_DIRECT));
+
+        // uplaod it
         return $this->_sendDirectItem('photo', $recipients, array_merge($options, [
             'filepath' => $photoFilename,
         ]));
@@ -612,6 +636,37 @@ class Direct extends RequestCollection
     {
         $internalMetadata = new InternalMetadata();
         $internalMetadata->setDirectRecipients($this->_prepareRecipients($recipients, true));
+        $internalMetadata->setStoryViewMode(Constants::STORY_VIEW_MODE_ONCE);
+
+        return $this->ig->internal->uploadSinglePhoto(Constants::FEED_DIRECT_STORY, $photoFilename, $internalMetadata, $externalMetadata);
+    }
+
+    /**
+     * Send a replayable photo (upload) via direct message to a user's inbox.
+     *
+     * @param array  $recipients       An array with "users" or "thread" keys.
+     *                                 To start a new thread, provide "users" as an array
+     *                                 of numerical UserPK IDs. To use an existing thread
+     *                                 instead, provide "thread" with the thread ID.
+     * @param string $photoFilename    The photo filename.
+     * @param array  $externalMetadata (optional) User-provided metadata key-value pairs.
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InstagramAPI\Exception\InstagramException
+     *
+     * @return \InstagramAPI\Response\ConfigureResponse
+     *
+     * @see Internal::configureSinglePhoto() for available metadata fields.
+     */
+    public function sendReplayablePhoto(
+        array $recipients,
+        $photoFilename,
+        array $externalMetadata = [])
+    {
+        $internalMetadata = new InternalMetadata();
+        $internalMetadata->setDirectRecipients($this->_prepareRecipients($recipients, true));
+        $internalMetadata->setStoryViewMode(Constants::STORY_VIEW_MODE_REPLAYABLE);
 
         return $this->ig->internal->uploadSinglePhoto(Constants::FEED_DIRECT_STORY, $photoFilename, $internalMetadata, $externalMetadata);
     }
@@ -707,6 +762,38 @@ class Direct extends RequestCollection
     {
         $internalMetadata = new InternalMetadata();
         $internalMetadata->setDirectRecipients($this->_prepareRecipients($recipients, true));
+        $internalMetadata->setStoryViewMode(Constants::STORY_VIEW_MODE_ONCE);
+
+        return $this->ig->internal->uploadSingleVideo(Constants::FEED_DIRECT_STORY, $videoFilename, $internalMetadata, $externalMetadata);
+    }
+
+    /**
+     * Send a replayable video (upload) via direct message to a user's inbox.
+     *
+     * @param array  $recipients       An array with "users" or "thread" keys.
+     *                                 To start a new thread, provide "users" as an array
+     *                                 of numerical UserPK IDs. To use an existing thread
+     *                                 instead, provide "thread" with the thread ID.
+     * @param string $videoFilename    The video filename.
+     * @param array  $externalMetadata (optional) User-provided metadata key-value pairs.
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
+     * @throws \InstagramAPI\Exception\InstagramException
+     * @throws \InstagramAPI\Exception\UploadFailedException If the video upload fails.
+     *
+     * @return \InstagramAPI\Response\ConfigureResponse
+     *
+     * @see Internal::configureSingleVideo() for available metadata fields.
+     */
+    public function sendReplayableVideo(
+        array $recipients,
+        $videoFilename,
+        array $externalMetadata = [])
+    {
+        $internalMetadata = new InternalMetadata();
+        $internalMetadata->setDirectRecipients($this->_prepareRecipients($recipients, true));
+        $internalMetadata->setStoryViewMode(Constants::STORY_VIEW_MODE_REPLAYABLE);
 
         return $this->ig->internal->uploadSingleVideo(Constants::FEED_DIRECT_STORY, $videoFilename, $internalMetadata, $externalMetadata);
     }

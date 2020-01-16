@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt\Packet;
 
 use BinSoul\Net\Mqtt\Exception\MalformedPacketException;
-use BinSoul\Net\Mqtt\PacketStream;
 use BinSoul\Net\Mqtt\Packet;
+use BinSoul\Net\Mqtt\PacketStream;
 
 /**
  * Represents the base class for all packets.
@@ -31,7 +33,7 @@ abstract class BasePacket implements Packet
      */
     protected $remainingPacketLength = 0;
 
-    public function __toString()
+    public function __toString(): string
     {
         $output = new PacketStream();
         $this->write($output);
@@ -68,6 +70,8 @@ abstract class BasePacket implements Packet
      *
      * @param PacketStream $stream
      *
+     * @return void
+     *
      * @throws MalformedPacketException
      */
     private function readRemainingLength(PacketStream $stream)
@@ -91,6 +95,8 @@ abstract class BasePacket implements Packet
      * Writes the remaining length to the given stream.
      *
      * @param PacketStream $stream
+     *
+     * @return void
      */
     private function writeRemainingLength(PacketStream $stream)
     {
@@ -106,7 +112,7 @@ abstract class BasePacket implements Packet
         } while ($x > 0);
     }
 
-    public function getPacketType()
+    public function getPacketType(): int
     {
         return static::$packetType;
     }
@@ -116,7 +122,7 @@ abstract class BasePacket implements Packet
      *
      * @return int
      */
-    public function getPacketFlags()
+    public function getPacketFlags(): int
     {
         return $this->packetFlags;
     }
@@ -126,7 +132,7 @@ abstract class BasePacket implements Packet
      *
      * @return int
      */
-    public function getRemainingPacketLength()
+    public function getRemainingPacketLength(): int
     {
         return $this->remainingPacketLength;
     }
@@ -136,6 +142,8 @@ abstract class BasePacket implements Packet
      *
      * @param int  $value
      * @param bool $fromPacket
+     *
+     * @return void
      *
      * @throws MalformedPacketException
      * @throws \InvalidArgumentException
@@ -159,6 +167,8 @@ abstract class BasePacket implements Packet
      *
      * @param int|null $value      value to test or null if any value greater than zero is valid
      * @param bool     $fromPacket
+     *
+     * @return void
      *
      * @throws MalformedPacketException
      * @throws \InvalidArgumentException
@@ -187,6 +197,8 @@ abstract class BasePacket implements Packet
      * @param string $value
      * @param bool   $fromPacket
      *
+     * @return void
+     *
      * @throws MalformedPacketException
      * @throws \InvalidArgumentException
      */
@@ -208,6 +220,8 @@ abstract class BasePacket implements Packet
      *
      * @param string $value
      * @param bool   $fromPacket
+     *
+     * @return void
      *
      * @throws MalformedPacketException
      * @throws \InvalidArgumentException
@@ -243,6 +257,8 @@ abstract class BasePacket implements Packet
      * @param int  $level
      * @param bool $fromPacket
      *
+     * @return void
+     *
      * @throws MalformedPacketException
      * @throws \InvalidArgumentException
      */
@@ -264,6 +280,8 @@ abstract class BasePacket implements Packet
      *
      * @param string $message
      * @param bool   $fromPacket
+     *
+     * @return void
      *
      * @throws MalformedPacketException
      * @throws \InvalidArgumentException

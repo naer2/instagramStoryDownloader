@@ -15,6 +15,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool getHasTranslation()
  * @method string getMediaId()
  * @method string getPk()
+ * @method bool getShareEnabled()
  * @method mixed getStatus()
  * @method string getText()
  * @method mixed getType()
@@ -28,6 +29,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isHasTranslation()
  * @method bool isMediaId()
  * @method bool isPk()
+ * @method bool isShareEnabled()
  * @method bool isStatus()
  * @method bool isText()
  * @method bool isType()
@@ -41,6 +43,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setHasTranslation(bool $value)
  * @method $this setMediaId(string $value)
  * @method $this setPk(string $value)
+ * @method $this setShareEnabled(bool $value)
  * @method $this setStatus(mixed $value)
  * @method $this setText(string $value)
  * @method $this setType(mixed $value)
@@ -54,6 +57,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetHasTranslation()
  * @method $this unsetMediaId()
  * @method $this unsetPk()
+ * @method $this unsetShareEnabled()
  * @method $this unsetStatus()
  * @method $this unsetText()
  * @method $this unsetType()
@@ -71,6 +75,7 @@ class Caption extends AutoPropertyMapper
         'user'               => 'User',
         'content_type'       => '',
         'text'               => 'string',
+        'share_enabled'      => 'bool',
         'media_id'           => 'string',
         'pk'                 => 'string',
         'type'               => '',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt;
 
 use BinSoul\Net\Mqtt\Exception\EndOfStreamException;
@@ -20,17 +22,21 @@ class StreamParser
 
     /**
      * Constructs an instance of this class.
+     *
+     * @param PacketFactory|null $packetFactory
      */
-    public function __construct()
+    public function __construct(PacketFactory $packetFactory = null)
     {
         $this->buffer = new PacketStream();
-        $this->factory = new PacketFactory();
+        $this->factory = $packetFactory ?? new DefaultPacketFactory();
     }
 
     /**
      * Registers an error callback.
      *
      * @param callable $callback
+     *
+     * @return void
      */
     public function onError($callback)
     {
@@ -44,7 +50,7 @@ class StreamParser
      *
      * @return Packet[]
      */
-    public function push($data)
+    public function push($data): array
     {
         $this->buffer->write($data);
 
@@ -79,6 +85,8 @@ class StreamParser
      * Executes the registered error callback.
      *
      * @param \Throwable $exception
+     *
+     * @return void
      */
     private function handleError($exception)
     {

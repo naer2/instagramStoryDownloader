@@ -18,7 +18,7 @@ $truncatedDebug = false;
  * is a rock-solid backend and will be very good for most people.
  *
  * However, other people may want to use something more advanced, such as one of
- * the other built-in storage backends ("MySQL", "SQLite" and "Memcached"). Or
+ * the other built-in storage backends ("MySQL", "SQLite", "Memcached" and "Redis"). Or
  * perhaps you'd even like to build your own backend (doing so is very easy).
  */
 
@@ -28,8 +28,8 @@ exit;
 // These points will give you a basic overview of the process. But you should
 // read the code in src/Settings/ for the full details. It is well documented.
 
-// 1. Choosing a built-in storage backend (one of "file", "mysql", "sqlite" or
-// "memcached"), and using the automatic, default settings for that backend:
+// 1. Choosing a built-in storage backend (one of "file", "mysql", "sqlite", "memcached"
+// or "redis"), and using the automatic, default settings for that backend:
 $ig = new \InstagramAPI\Instagram($debug, $truncatedDebug, [
     'storage' => 'mysql',
 ]);
@@ -41,12 +41,18 @@ $ig = new \InstagramAPI\Instagram($debug, $truncatedDebug, [
     'basefolder' => 'some/path/',
 ]);
 
-// 3. And here's an example of how to change the default database filename and
-// the default database table name for the "sqlite" backend:
+// 3. And here's some examples of how to change the default options
+// for some other backends:
 $ig = new \InstagramAPI\Instagram($debug, $truncatedDebug, [
     'storage'     => 'sqlite',
     'dbfilename'  => 'some/path/foo.db',
     'dbtablename' => 'mysettings',
+]);
+$ig = new \InstagramAPI\Instagram($debug, $truncatedDebug, [
+    'storage'        => 'redis',
+    'redishost'      => 'some.redis.provider.com',
+    'redisport'      => 1234,
+    'redisauth'      => 'xXxMyPasSw0rdxXx',
 ]);
 
 // 4. If you read src/Settings/Factory.php, you'll notice that you can choose

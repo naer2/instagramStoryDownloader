@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt\Packet;
 
-use BinSoul\Net\Mqtt\PacketStream;
 use BinSoul\Net\Mqtt\Packet;
+use BinSoul\Net\Mqtt\PacketStream;
 
 /**
  * Represents the PUBLISH packet.
@@ -60,7 +62,7 @@ class PublishRequestPacket extends BasePacket
      *
      * @return string
      */
-    public function getTopic()
+    public function getTopic(): string
     {
         return $this->topic;
     }
@@ -69,6 +71,8 @@ class PublishRequestPacket extends BasePacket
      * Sets the topic.
      *
      * @param string $value
+     *
+     * @return void
      *
      * @throws \InvalidArgumentException
      */
@@ -87,7 +91,7 @@ class PublishRequestPacket extends BasePacket
      *
      * @return string
      */
-    public function getPayload()
+    public function getPayload(): string
     {
         return $this->payload;
     }
@@ -96,6 +100,8 @@ class PublishRequestPacket extends BasePacket
      * Sets the payload.
      *
      * @param string $value
+     *
+     * @return void
      */
     public function setPayload($value)
     {
@@ -107,7 +113,7 @@ class PublishRequestPacket extends BasePacket
      *
      * @return bool
      */
-    public function isDuplicate()
+    public function isDuplicate(): bool
     {
         return ($this->packetFlags & 8) === 8;
     }
@@ -116,6 +122,8 @@ class PublishRequestPacket extends BasePacket
      * Marks the packet as duplicate.
      *
      * @param bool $value
+     *
+     * @return void
      */
     public function setDuplicate($value)
     {
@@ -131,7 +139,7 @@ class PublishRequestPacket extends BasePacket
      *
      * @return bool
      */
-    public function isRetained()
+    public function isRetained(): bool
     {
         return ($this->packetFlags & 1) === 1;
     }
@@ -140,6 +148,8 @@ class PublishRequestPacket extends BasePacket
      * Marks the packet as retained.
      *
      * @param bool $value
+     *
+     * @return void
      */
     public function setRetained($value)
     {
@@ -155,7 +165,7 @@ class PublishRequestPacket extends BasePacket
      *
      * @return int
      */
-    public function getQosLevel()
+    public function getQosLevel(): int
     {
         return ($this->packetFlags & 6) >> 1;
     }
@@ -164,6 +174,8 @@ class PublishRequestPacket extends BasePacket
      * Sets the quality of service level.
      *
      * @param int $value
+     *
+     * @return void
      *
      * @throws \InvalidArgumentException
      */

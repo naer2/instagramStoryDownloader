@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt;
 
 /**
@@ -51,27 +53,27 @@ class DefaultConnection implements Connection
         $this->clean = $clean;
     }
 
-    public function getProtocol()
+    public function getProtocol(): int
     {
         return $this->protocol;
     }
 
-    public function getClientID()
+    public function getClientID(): string
     {
         return $this->clientID;
     }
 
-    public function isCleanSession()
+    public function isCleanSession(): bool
     {
         return $this->clean;
     }
 
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -81,12 +83,12 @@ class DefaultConnection implements Connection
         return $this->will;
     }
 
-    public function getKeepAlive()
+    public function getKeepAlive(): int
     {
         return $this->keepAlive;
     }
 
-    public function withProtocol($protocol)
+    public function withProtocol(int $protocol): Connection
     {
         $result = clone $this;
         $result->protocol = $protocol;
@@ -94,7 +96,7 @@ class DefaultConnection implements Connection
         return $result;
     }
 
-    public function withClientID($clientID)
+    public function withClientID(string $clientID): Connection
     {
         $result = clone $this;
         $result->clientID = $clientID;
@@ -102,7 +104,7 @@ class DefaultConnection implements Connection
         return $result;
     }
 
-    public function withCredentials($username, $password)
+    public function withCredentials(string $username, string $password): Connection
     {
         $result = clone $this;
         $result->username = $username;
@@ -111,7 +113,7 @@ class DefaultConnection implements Connection
         return $result;
     }
 
-    public function withWill(Message $will = null)
+    public function withWill(Message $will = null): Connection
     {
         $result = clone $this;
         $result->will = $will;
@@ -119,7 +121,7 @@ class DefaultConnection implements Connection
         return $result;
     }
 
-    public function withKeepAlive($timeout)
+    public function withKeepAlive(int $timeout): Connection
     {
         $result = clone $this;
         $result->keepAlive = $timeout;

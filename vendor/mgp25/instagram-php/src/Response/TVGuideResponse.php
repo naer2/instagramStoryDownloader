@@ -8,6 +8,7 @@ use InstagramAPI\Response;
  * TVGuideResponse.
  *
  * @method Model\Badging getBadging()
+ * @method string getBannerToken()
  * @method Model\TVChannel[] getChannels()
  * @method Model\Composer getComposer()
  * @method mixed getMessage()
@@ -15,6 +16,7 @@ use InstagramAPI\Response;
  * @method string getStatus()
  * @method Model\_Message[] get_Messages()
  * @method bool isBadging()
+ * @method bool isBannerToken()
  * @method bool isChannels()
  * @method bool isComposer()
  * @method bool isMessage()
@@ -22,6 +24,7 @@ use InstagramAPI\Response;
  * @method bool isStatus()
  * @method bool is_Messages()
  * @method $this setBadging(Model\Badging $value)
+ * @method $this setBannerToken(string $value)
  * @method $this setChannels(Model\TVChannel[] $value)
  * @method $this setComposer(Model\Composer $value)
  * @method $this setMessage(mixed $value)
@@ -29,6 +32,7 @@ use InstagramAPI\Response;
  * @method $this setStatus(string $value)
  * @method $this set_Messages(Model\_Message[] $value)
  * @method $this unsetBadging()
+ * @method $this unsetBannerToken()
  * @method $this unsetChannels()
  * @method $this unsetComposer()
  * @method $this unsetMessage()
@@ -39,9 +43,10 @@ use InstagramAPI\Response;
 class TVGuideResponse extends Response
 {
     const JSON_PROPERTY_MAP = [
-        'channels'   => 'Model\TVChannel[]',
-        'my_channel' => 'Model\TVChannel',
-        'badging'    => 'Model\Badging',
-        'composer'   => 'Model\Composer',
+        'channels'     => 'Model\TVChannel[]',
+        'my_channel'   => 'Model\TVChannel',
+        'badging'      => 'Model\Badging',
+        'composer'     => 'Model\Composer',
+        'banner_token' => 'string',
     ];
 }

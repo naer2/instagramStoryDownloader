@@ -8,12 +8,12 @@ use InstagramAPI\AutoPropertyMapper;
  * Channel.
  *
  * @method string getChannelId()
- * @method mixed getChannelType()
+ * @method string getChannelType()
  * @method mixed getContext()
- * @method mixed getHeader()
+ * @method string getHeader()
  * @method Item getMedia()
  * @method int getMediaCount()
- * @method mixed getTitle()
+ * @method string getTitle()
  * @method bool isChannelId()
  * @method bool isChannelType()
  * @method bool isContext()
@@ -22,12 +22,12 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isMediaCount()
  * @method bool isTitle()
  * @method $this setChannelId(string $value)
- * @method $this setChannelType(mixed $value)
+ * @method $this setChannelType(string $value)
  * @method $this setContext(mixed $value)
- * @method $this setHeader(mixed $value)
+ * @method $this setHeader(string $value)
  * @method $this setMedia(Item $value)
  * @method $this setMediaCount(int $value)
- * @method $this setTitle(mixed $value)
+ * @method $this setTitle(string $value)
  * @method $this unsetChannelId()
  * @method $this unsetChannelType()
  * @method $this unsetContext()
@@ -40,9 +40,9 @@ class Channel extends AutoPropertyMapper
 {
     const JSON_PROPERTY_MAP = [
         'channel_id'   => 'string',
-        'channel_type' => '',
-        'title'        => '',
-        'header'       => '',
+        'channel_type' => 'string',
+        'title'        => 'string',
+        'header'       => 'string',
         'media_count'  => 'int',
         'media'        => 'Item',
         'context'      => '',

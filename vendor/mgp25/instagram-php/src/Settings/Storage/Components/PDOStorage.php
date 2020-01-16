@@ -159,10 +159,10 @@ abstract class PDOStorage implements StorageInterface
             // Update if the user row already exists, otherwise insert.
             $binds = [':data' => $data];
             if ($this->_cache['id'] !== null) {
-                $sql = "UPDATE `{$this->_dbTableName}` SET {$column}=:data WHERE (id=:id)";
+                $sql = "UPDATE {$this->_dbTableName} SET {$column}=:data WHERE (id=:id)";
                 $binds[':id'] = $this->_cache['id'];
             } else {
-                $sql = "INSERT INTO `{$this->_dbTableName}` (username, {$column}) VALUES (:username, :data)";
+                $sql = "INSERT INTO {$this->_dbTableName} (username, {$column}) VALUES (:username, :data)";
                 $binds[':username'] = $this->_username;
             }
 
@@ -192,7 +192,7 @@ abstract class PDOStorage implements StorageInterface
         $username)
     {
         // Check whether a row exists for that username.
-        $sth = $this->_pdo->prepare("SELECT EXISTS(SELECT 1 FROM `{$this->_dbTableName}` WHERE (username=:username))");
+        $sth = $this->_pdo->prepare("SELECT EXISTS(SELECT 1 FROM {$this->_dbTableName} WHERE (username=:username))");
         $sth->execute([':username' => $username]);
         $result = $sth->fetchColumn();
         $sth->closeCursor();
@@ -227,7 +227,7 @@ abstract class PDOStorage implements StorageInterface
             }
 
             // Now attempt to rename the old username column to the new name.
-            $sth = $this->_pdo->prepare("UPDATE `{$this->_dbTableName}` SET username=:newusername WHERE (username=:oldusername)");
+            $sth = $this->_pdo->prepare("UPDATE {$this->_dbTableName} SET username=:newusername WHERE (username=:oldusername)");
             $sth->execute([':oldusername' => $oldUsername, ':newusername' => $newUsername]);
             $sth->closeCursor();
         } catch (SettingsException $e) {
@@ -247,7 +247,7 @@ abstract class PDOStorage implements StorageInterface
     {
         try {
             // Just attempt to delete the row. Doesn't error if already missing.
-            $sth = $this->_pdo->prepare("DELETE FROM `{$this->_dbTableName}` WHERE (username=:username)");
+            $sth = $this->_pdo->prepare("DELETE FROM {$this->_dbTableName} WHERE (username=:username)");
             $sth->execute([':username' => $username]);
             $sth->closeCursor();
         } catch (\Exception $e) {
@@ -267,7 +267,7 @@ abstract class PDOStorage implements StorageInterface
 
         // Retrieve and cache the existing user data row if available.
         try {
-            $sth = $this->_pdo->prepare("SELECT id, settings, cookies FROM `{$this->_dbTableName}` WHERE (username=:username)");
+            $sth = $this->_pdo->prepare("SELECT id, settings, cookies FROM {$this->_dbTableName} WHERE (username=:username)");
             $sth->execute([':username' => $this->_username]);
             $result = $sth->fetch(PDO::FETCH_ASSOC);
             $sth->closeCursor();

@@ -6,7 +6,6 @@ return PhpCsFixer\Config::create()
         ->in(__DIR__)
     )
     ->setIndent('    ')
-    ->setLineEnding("\n")
     ->setRules([
         '@Symfony'                            => true,
         // Override @Symfony rules
@@ -32,7 +31,7 @@ return PhpCsFixer\Config::create()
         // Custom rules
         'align_multiline_comment'             => true,
         'phpdoc_add_missing_param_annotation' => ['only_untyped' => false],
-        'ordered_imports'                     => true,
+        'ordered_imports'                     => ['sort_algorithm' => 'alpha'],
         'phpdoc_order'                        => true,
         'array_syntax'                        => ['syntax' => 'short'],
     ]);

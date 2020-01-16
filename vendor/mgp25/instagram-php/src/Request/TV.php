@@ -15,14 +15,39 @@ class TV extends RequestCollection
      *
      * It provides a catalogue of popular and suggested channels.
      *
+     * @param array|null $options An associative array with following keys (all
+     *                            of them are optional):
+     *                            "is_charging" Wether the device is being charged
+     *                            or not. Valid values: 0 for not charging, 1 for
+     *                            charging.
+     *
      * @throws \InstagramAPI\Exception\InstagramException
      *
      * @return \InstagramAPI\Response\TVGuideResponse
      */
-    public function getTvGuide()
+    public function getTvGuide(
+        array $options = null)
     {
-        return $this->ig->request('igtv/tv_guide/')
-            ->getResponse(new Response\TVGuideResponse());
+        $request = $this->ig->request('igtv/tv_guide/')
+            ->addHeader('X-Ads-Opt-Out', '0')
+            ->addHeader('X-Google-AD-ID', $this->ig->advertising_id)
+            ->addHeader('X-DEVICE-ID', $this->ig->uuid)
+            ->addParam('prefetch', 1)
+            ->addParam('phone_id', $this->ig->phone_id)
+            ->addParam('battery_level', '100')
+//            ->addParam('banner_token', 'OgYA')
+            ->addParam('is_charging', '1')
+            ->addParam('will_sound_on', '1');
+
+        if (isset($options['is_charging'])) {
+            $request->addParam('is_charging', $options['is_charging']);
+        } else {
+            $request->addParam('is_charging', '0');
+        }
+
+        $response = $request->getResponse(new Response\TVGuideResponse());
+
+        return $response;
     }
 
     /**

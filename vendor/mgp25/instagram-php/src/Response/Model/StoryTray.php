@@ -13,12 +13,15 @@ use InstagramAPI\AutoPropertyMapper;
  * @method DismissCard getDismissCard()
  * @method mixed getExpiringAt()
  * @method bool getHasBestiesMedia()
+ * @method bool getHasPrideMedia()
+ * @method bool getHideFromFeedUnit()
  * @method string getId()
  * @method mixed getIsNux()
  * @method Item[] getItems()
  * @method string getLatestReelMedia()
  * @method Location getLocation()
  * @method int getMediaCount()
+ * @method string[] getMediaIds()
  * @method mixed getMuted()
  * @method string getNuxId()
  * @method Owner getOwner()
@@ -38,12 +41,15 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isDismissCard()
  * @method bool isExpiringAt()
  * @method bool isHasBestiesMedia()
+ * @method bool isHasPrideMedia()
+ * @method bool isHideFromFeedUnit()
  * @method bool isId()
  * @method bool isIsNux()
  * @method bool isItems()
  * @method bool isLatestReelMedia()
  * @method bool isLocation()
  * @method bool isMediaCount()
+ * @method bool isMediaIds()
  * @method bool isMuted()
  * @method bool isNuxId()
  * @method bool isOwner()
@@ -63,12 +69,15 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setDismissCard(DismissCard $value)
  * @method $this setExpiringAt(mixed $value)
  * @method $this setHasBestiesMedia(bool $value)
+ * @method $this setHasPrideMedia(bool $value)
+ * @method $this setHideFromFeedUnit(bool $value)
  * @method $this setId(string $value)
  * @method $this setIsNux(mixed $value)
  * @method $this setItems(Item[] $value)
  * @method $this setLatestReelMedia(string $value)
  * @method $this setLocation(Location $value)
  * @method $this setMediaCount(int $value)
+ * @method $this setMediaIds(string[] $value)
  * @method $this setMuted(mixed $value)
  * @method $this setNuxId(string $value)
  * @method $this setOwner(Owner $value)
@@ -88,12 +97,15 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetDismissCard()
  * @method $this unsetExpiringAt()
  * @method $this unsetHasBestiesMedia()
+ * @method $this unsetHasPrideMedia()
+ * @method $this unsetHideFromFeedUnit()
  * @method $this unsetId()
  * @method $this unsetIsNux()
  * @method $this unsetItems()
  * @method $this unsetLatestReelMedia()
  * @method $this unsetLocation()
  * @method $this unsetMediaCount()
+ * @method $this unsetMediaIds()
  * @method $this unsetMuted()
  * @method $this unsetNuxId()
  * @method $this unsetOwner()
@@ -113,6 +125,9 @@ class StoryTray extends AutoPropertyMapper
     const JSON_PROPERTY_MAP = [
         'id'                   => 'string',
         'items'                => 'Item[]',
+        'hide_from_feed_unit'  => 'bool',
+        'media_ids'            => 'string[]',
+        'has_pride_media'      => 'bool',
         'user'                 => 'User',
         'can_reply'            => '',
         'expiring_at'          => '',

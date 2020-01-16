@@ -18,7 +18,7 @@ class VideoDetails extends MediaDetails
      *
      * @var int
      */
-    const MIN_WIDTH = 480;
+    const MIN_WIDTH = 600;
 
     /**
      * Maximum allowed video width.
@@ -29,7 +29,7 @@ class VideoDetails extends MediaDetails
      *
      * @var int
      */
-    const MAX_WIDTH = 720;
+    const MAX_WIDTH = 1080;
 
     /** @var float */
     private $_duration;
@@ -45,6 +45,9 @@ class VideoDetails extends MediaDetails
 
     /** @var int */
     private $_rotation;
+
+    /** @var bool */
+    private $_hasRotationMatrix;
 
     /**
      * @return float
@@ -103,6 +106,16 @@ class VideoDetails extends MediaDetails
     public function isVerticallyFlipped()
     {
         return $this->_rotation === 180 || $this->_rotation === 270;
+    }
+
+    /**
+     * Check whether the video has display matrix with rotate.
+     *
+     * @return bool
+     */
+    public function hasRotationMatrix()
+    {
+        return $this->_hasRotationMatrix;
     }
 
     /** {@inheritdoc} */
@@ -174,6 +187,7 @@ class VideoDetails extends MediaDetails
         // Now analyze all streams to find the first video stream.
         $width = null;
         $height = null;
+        $this->_hasRotationMatrix = false;
         foreach ($probeResult['streams'] as $streamIdx => $streamInfo) {
             if (!isset($streamInfo['codec_type'])) {
                 continue;
@@ -196,6 +210,20 @@ class VideoDetails extends MediaDetails
                         $tags = array_change_key_case($streamInfo['tags'], CASE_LOWER);
                         if (isset($tags['rotate'])) {
                             $this->_rotation = $this->_normalizeRotation((int) $tags['rotate']);
+                        }
+                    }
+                    if (isset($streamInfo['side_data_list']) && is_array($streamInfo['side_data_list'])) {
+                        foreach ($streamInfo['side_data_list'] as $sideData) {
+                            if (!isset($sideData['side_data_type'])) {
+                                continue;
+                            }
+                            if (!isset($sideData['rotation'])) {
+                                continue;
+                            }
+
+                            $this->_hasRotationMatrix =
+                                strcasecmp($sideData['side_data_type'], 'Display Matrix') === 0
+                                && abs($sideData['rotation']) > 0.1;
                         }
                     }
                     break;

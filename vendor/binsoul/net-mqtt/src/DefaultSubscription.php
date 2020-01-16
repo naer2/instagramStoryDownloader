@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt;
 
 /**
@@ -24,17 +26,17 @@ class DefaultSubscription implements Subscription
         $this->qosLevel = $qosLevel;
     }
 
-    public function getFilter()
+    public function getFilter(): string
     {
         return $this->filter;
     }
 
-    public function getQosLevel()
+    public function getQosLevel(): int
     {
         return $this->qosLevel;
     }
 
-    public function withFilter($filter)
+    public function withFilter(string $filter): Subscription
     {
         $result = clone $this;
         $result->filter = $filter;
@@ -42,7 +44,7 @@ class DefaultSubscription implements Subscription
         return $result;
     }
 
-    public function withQosLevel($level)
+    public function withQosLevel(int $level): Subscription
     {
         $result = clone $this;
         $result->qosLevel = $level;

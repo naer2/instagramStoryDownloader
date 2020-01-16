@@ -104,13 +104,14 @@ class Location extends RequestCollection
      * WARNING: The locations found by this function DO NOT work for attaching
      * locations to media uploads. Use Location::search() instead!
      *
-     * @param string         $latitude    Latitude.
-     * @param string         $longitude   Longitude.
-     * @param string|null    $query       (Optional) Finds locations containing this string.
-     * @param string[]|int[] $excludeList Array of numerical location IDs (ie "17841562498105353")
-     *                                    to exclude from the response, allowing you to skip locations
-     *                                    from a previous call to get more results.
-     * @param string|null    $rankToken   (When paginating) The rank token from the previous page's response.
+     * @param string         $latitude      Latitude.
+     * @param string         $longitude     Longitude.
+     * @param string|null    $query         (Optional) Finds locations containing this string.
+     * @param string[]|int[] $excludeList   Array of numerical location IDs (ie "17841562498105353")
+     *                                      to exclude from the response, allowing you to skip locations
+     *                                      from a previous call to get more results.
+     * @param string|null    $rankToken     (When paginating) The rank token from the previous page's response.
+     * @param string         $searchSurface (Optional) The place (surface) in the app where this action was triggered.
      *
      * @throws \InvalidArgumentException
      * @throws \InstagramAPI\Exception\InstagramException
@@ -125,13 +126,15 @@ class Location extends RequestCollection
         $longitude,
         $query = null,
         $excludeList = [],
-        $rankToken = null)
+        $rankToken = null,
+        $searchSurface = 'nearby_places_search_page')
     {
         $location = $this->_paginateWithExclusion(
             $this->ig->request('fbsearch/places/')
                 ->addParam('lat', $latitude)
                 ->addParam('lng', $longitude)
-                ->addParam('timezone_offset', date('Z')),
+                ->addParam('timezone_offset', date('Z'))
+                ->addParam('search_surface', $searchSurface),
             $excludeList,
             $rankToken,
             50

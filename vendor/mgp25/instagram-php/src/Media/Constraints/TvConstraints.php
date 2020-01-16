@@ -16,7 +16,7 @@ class TvConstraints extends StoryConstraints
      *
      * @var float
      */
-    const MIN_RATIO = 0.5;
+    const MIN_RATIO = 0.5625;
 
     /**
      * Highest allowed aspect ratio.
@@ -27,7 +27,7 @@ class TvConstraints extends StoryConstraints
      *
      * @var float
      */
-    const MAX_RATIO = 0.8;
+    const MAX_RATIO = 1.7778;
 
     /**
      * Minimum allowed video duration.

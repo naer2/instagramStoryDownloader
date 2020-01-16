@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt;
 
 /**
@@ -10,27 +12,27 @@ interface Connection
     /**
      * @return int
      */
-    public function getProtocol();
+    public function getProtocol(): int;
 
     /**
      * @return string
      */
-    public function getClientID();
+    public function getClientID(): string;
 
     /**
      * @return bool
      */
-    public function isCleanSession();
+    public function isCleanSession(): bool;
 
     /**
      * @return string
      */
-    public function getUsername();
+    public function getUsername(): string;
 
     /**
      * @return string
      */
-    public function getPassword();
+    public function getPassword(): string;
 
     /**
      * @return Message|null
@@ -40,7 +42,7 @@ interface Connection
     /**
      * @return int
      */
-    public function getKeepAlive();
+    public function getKeepAlive(): int;
 
     /**
      * Returns a new connection with the given protocol.
@@ -49,7 +51,7 @@ interface Connection
      *
      * @return self
      */
-    public function withProtocol($protocol);
+    public function withProtocol(int $protocol): Connection;
 
     /**
      * Returns a new connection with the given client id.
@@ -58,7 +60,7 @@ interface Connection
      *
      * @return self
      */
-    public function withClientID($clientID);
+    public function withClientID(string $clientID): Connection;
 
     /**
      * Returns a new connection with the given credentials.
@@ -68,7 +70,7 @@ interface Connection
      *
      * @return self
      */
-    public function withCredentials($username, $password);
+    public function withCredentials(string $username, string $password): Connection;
 
     /**
      * Returns a new connection with the given will.
@@ -77,7 +79,7 @@ interface Connection
      *
      * @return self
      */
-    public function withWill(Message $will);
+    public function withWill(Message $will): Connection;
 
     /**
      * Returns a new connection with the given keep alive timeout.
@@ -86,5 +88,5 @@ interface Connection
      *
      * @return self
      */
-    public function withKeepAlive($timeout);
+    public function withKeepAlive(int $timeout): Connection;
 }

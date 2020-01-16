@@ -8,14 +8,14 @@ use InstagramAPI\AutoPropertyMapper;
  * Headline.
  *
  * @method int getBitFlags()
- * @method mixed getContentType()
+ * @method string getContentType()
  * @method string getCreatedAt()
  * @method string getCreatedAtUtc()
  * @method string getMediaId()
  * @method string getPk()
  * @method mixed getStatus()
  * @method string getText()
- * @method mixed getType()
+ * @method int getType()
  * @method User getUser()
  * @method string getUserId()
  * @method bool isBitFlags()
@@ -30,14 +30,14 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isUser()
  * @method bool isUserId()
  * @method $this setBitFlags(int $value)
- * @method $this setContentType(mixed $value)
+ * @method $this setContentType(string $value)
  * @method $this setCreatedAt(string $value)
  * @method $this setCreatedAtUtc(string $value)
  * @method $this setMediaId(string $value)
  * @method $this setPk(string $value)
  * @method $this setStatus(mixed $value)
  * @method $this setText(string $value)
- * @method $this setType(mixed $value)
+ * @method $this setType(int $value)
  * @method $this setUser(User $value)
  * @method $this setUserId(string $value)
  * @method $this unsetBitFlags()
@@ -55,12 +55,12 @@ use InstagramAPI\AutoPropertyMapper;
 class Headline extends AutoPropertyMapper
 {
     const JSON_PROPERTY_MAP = [
-        'content_type'   => '',
+        'content_type'   => 'string',
         'user'           => 'User',
         'user_id'        => 'string',
         'pk'             => 'string',
         'text'           => 'string',
-        'type'           => '',
+        'type'           => 'int',
         'created_at'     => 'string',
         'created_at_utc' => 'string',
         'media_id'       => 'string',

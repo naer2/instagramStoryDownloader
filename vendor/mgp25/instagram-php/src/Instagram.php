@@ -3,7 +3,7 @@
 namespace InstagramAPI;
 
 /**
- * Instagram's Private API v5.
+ * Instagram's Private API v7.0.1.
  *
  * TERMS OF USE:
  * - This code is in no way affiliated with, authorized, maintained, sponsored
@@ -494,7 +494,8 @@ class Instagram implements ExperimentsInterface
             try {
                 $response = $this->request('accounts/login/')
                     ->setNeedsAuth(false)
-                    ->addPost('country_codes', '[{"country_code":"1","source":["default","sim"]}]')
+                    ->addPost('jazoest', Utils::generateJazoest($this->phone_id))
+                    ->addPost('country_codes', '[{"country_code":"1","source":["default"]}]')
                     ->addPost('phone_id', $this->phone_id)
                     ->addPost('_csrftoken', $this->client->getToken())
                     ->addPost('username', $this->username)
@@ -502,6 +503,7 @@ class Instagram implements ExperimentsInterface
                     ->addPost('guid', $this->uuid)
                     ->addPost('device_id', $this->device_id)
                     ->addPost('password', $this->password)
+                    ->addPost('enc_password', Utils::encryptPassword($password, $this->settings->get('public_key_id'), $this->settings->get('public_key')))
                     ->addPost('google_tokens', '[]')
                     ->addPost('login_attempt_count', 0)
                     ->getResponse(new Response\LoginResponse());
@@ -536,8 +538,7 @@ class Instagram implements ExperimentsInterface
      * regular `login()` function. If you successfully answer their challenge,
      * you will be logged in after this function call.
      *
-     * @param string $username            Your Instagram username.
-     *                                    Email and phone aren't allowed here.
+     * @param string $username            Your Instagram username used for logging
      * @param string $password            Your Instagram password.
      * @param string $twoFactorIdentifier Two factor identifier, obtained in
      *                                    login() response. Format: `123456`.
@@ -547,8 +548,9 @@ class Instagram implements ExperimentsInterface
      *                                    2 is backup codes and 3 is TOTP.
      * @param int    $appRefreshInterval  See `login()` for description of this
      *                                    parameter.
-     * @param int    $usernameHandler     Your Instagram username, used when logging in
-     *                                    with an email using Two Factor login.
+     * @param string $usernameHandler     Instagram username sent in the login response,
+     *                                    Email and phone aren't allowed here.
+     *                                    Default value is the first argument $username
      *
      * @throws \InvalidArgumentException
      * @throws \InstagramAPI\Exception\InstagramException
@@ -594,9 +596,10 @@ class Instagram implements ExperimentsInterface
             // 1 - SMS, 2 - Backup codes, 3 - TOTP, 0 - ??
             ->addPost('verification_method', $verificationMethod)
             ->addPost('verification_code', $verificationCode)
+            ->addPost('trust_this_device', 1)
             ->addPost('two_factor_identifier', $twoFactorIdentifier)
             ->addPost('_csrftoken', $this->client->getToken())
-            ->addPost('username', $this->username)
+            ->addPost('username', $username)
             ->addPost('device_id', $this->device_id)
             ->addPost('guid', $this->uuid)
             ->getResponse(new Response\LoginResponse());
@@ -621,6 +624,9 @@ class Instagram implements ExperimentsInterface
      * @param string $password            Your Instagram password.
      * @param string $twoFactorIdentifier Two factor identifier, obtained in
      *                                    `login()` response.
+     * @param string $usernameHandler     Instagram username sent in the login response,
+     *                                    Email and phone aren't allowed here.
+     *                                    Default value is the first argument $username
      *
      * @throws \InstagramAPI\Exception\InstagramException
      *
@@ -629,7 +635,8 @@ class Instagram implements ExperimentsInterface
     public function sendTwoFactorLoginSMS(
         $username,
         $password,
-        $twoFactorIdentifier)
+        $twoFactorIdentifier,
+        $usernameHandler = null)
     {
         if (empty($username) || empty($password)) {
             throw new \InvalidArgumentException('You must provide a username and password to sendTwoFactorLoginSMS().');
@@ -647,6 +654,8 @@ class Instagram implements ExperimentsInterface
         if ($this->username !== $username || $this->password !== $password) {
             $this->_setUser($username, $password);
         }
+
+        $username = ($usernameHandler !== null) ? $usernameHandler : $username;
 
         return $this->request('accounts/send_two_factor_login_sms/')
             ->setNeedsAuth(false)
@@ -938,14 +947,20 @@ class Instagram implements ExperimentsInterface
         $this->client->zeroRating()->reset();
         // Calling this non-token API will put a csrftoken in our cookie
         // jar. We must do this before any functions that require a token.
-        $this->internal->readMsisdnHeader('ig_select_app');
-        $this->internal->syncDeviceFeatures(true);
-        $this->internal->sendLauncherSync(true);
-        $this->internal->logAttribution();
-        // We must fetch new token here, because it updates rewrite rules.
         $this->internal->fetchZeroRatingToken();
-        // It must be at the end, because it's called when a user taps on login input.
+        $this->internal->bootstrapMsisdnHeader();
+        $this->internal->readMsisdnHeader('default');
+        $this->internal->syncDeviceFeatures(true);
+        $launcherResponse = $this->internal->sendLauncherSync(true)->getHttpResponse();
+        $this->settings->set('public_key', $launcherResponse->getHeaderLine('ig-set-password-encryption-pub-key'));
+        $this->settings->set('public_key_id', $launcherResponse->getHeaderLine('ig-set-password-encryption-key-id'));
+        $this->internal->bootstrapMsisdnHeader();
+        $this->internal->logAttribution();
+        $this->account->getPrefillCandidates();
+        $this->internal->readMsisdnHeader('default', true);
         $this->account->setContactPointPrefill('prefill');
+        $this->internal->sendLauncherSync(true, true, true);
+        $this->internal->syncDeviceFeatures(true, true);
     }
 
     /**
@@ -1045,34 +1060,38 @@ class Instagram implements ExperimentsInterface
             // Reset zero rating rewrite rules.
             $this->client->zeroRating()->reset();
             // Perform the "user has just done a full login" API flow.
-            $this->internal->sendLauncherSync(false);
-            $this->internal->syncUserFeatures();
-            $this->timeline->getTimelineFeed(null, ['recovered_from_crash' => true]);
-            $this->story->getReelsTrayFeed();
-            $this->discover->getSuggestedSearches('users');
-            $this->discover->getRecentSearches();
-            $this->discover->getSuggestedSearches('blended');
-            //$this->story->getReelsMediaFeed();
-            // We must fetch new token here, because it updates rewrite rules.
+            $this->account->getAccountFamily();
+            $this->internal->sendLauncherSync(false, false, true);
             $this->internal->fetchZeroRatingToken();
-            $this->_registerPushChannels();
-            $this->direct->getRankedRecipients('reshare', true);
-            $this->direct->getRankedRecipients('raven', true);
-            $this->direct->getInbox();
-            //$this->internal->logResurrectAttribution();
-            $this->direct->getPresences();
+            $this->internal->syncUserFeatures();
+            $this->timeline->getTimelineFeed();
+            $this->story->getReelsTrayFeed('cold_start');
+            $this->internal->sendLauncherSync(false, false, true, true);
+            $this->story->getReelsMediaFeed($this->account_id);
             $this->people->getRecentActivityInbox();
-            if ((int) $this->getExperimentParam('ig_android_loom_universe', 'cpu_sampling_rate_ms', 0) > 0) {
-                $this->internal->getLoomFetchConfig();
-            }
-            $this->internal->getProfileNotice();
-            $this->media->getBlockedMedia();
-            //$this->account->getProcessContactPointSignals();
+            //TODO: Figure out why this isn't sending...
+//            $this->internal->logResurrectAttribution();
+            $this->internal->getLoomFetchConfig();
+            $this->internal->getDeviceCapabilitiesDecisions();
             $this->people->getBootstrapUsers();
-            //$this->internal->getQPCooldowns();
-            $this->discover->getExploreFeed(null, true);
-            //$this->internal->getMegaphoneLog();
+            $this->people->getInfoById($this->account_id);
+            $this->account->getLinkageStatus();
+            $this->creative->sendSupportedCapabilities();
+            $this->media->getBlockedMedia();
+            $this->internal->storeClientPushPermissions();
+            $this->internal->getQPCooldowns();
+            $this->_registerPushChannels();
+            $this->story->getReelsMediaFeed($this->account_id);
+            $this->discover->getExploreFeed(null, null, true);
             $this->internal->getQPFetch();
+            $this->account->getProcessContactPointSignals();
+            $this->internal->getArlinkDownloadInfo();
+            $this->_registerPushChannels();
+            $this->people->getSharePrefill();
+            $this->direct->getPresences();
+            $this->direct->getInbox();
+            $this->direct->getInbox(null, 20, 10);
+            $this->_registerPushChannels();
             $this->internal->getFacebookOTA();
         } else {
             $lastLoginTime = $this->settings->get('last_login');
@@ -1080,37 +1099,41 @@ class Instagram implements ExperimentsInterface
 
             // Act like a real logged in app client refreshing its news timeline.
             // This also lets us detect if we're still logged in with a valid session.
-            try {
+            if ($isSessionExpired) {
+                // Act like a real logged in app client refreshing its news timeline.
+                // This also lets us detect if we're still logged in with a valid session.
+                try {
+                    $this->story->getReelsTrayFeed('cold_start');
+                } catch (\InstagramAPI\Exception\LoginRequiredException $e) {
+                    // If our session cookies are expired, we were now told to login,
+                    // so handle that by running a forced relogin in that case!
+                    return $this->_login($this->username, $this->password, true, $appRefreshInterval);
+                }
                 $this->timeline->getTimelineFeed(null, [
                     'is_pull_to_refresh' => $isSessionExpired ? null : mt_rand(1, 3) < 3,
                 ]);
-            } catch (\InstagramAPI\Exception\LoginRequiredException $e) {
-                // If our session cookies are expired, we were now told to login,
-                // so handle that by running a forced relogin in that case!
-                return $this->_login($this->username, $this->password, true, $appRefreshInterval);
-            }
+                $this->people->getSharePrefill();
+                $this->people->getRecentActivityInbox();
 
-            // Perform the "user has returned to their already-logged in app,
-            // so refresh all feeds to check for news" API flow.
-            if ($isSessionExpired) {
+                $this->people->getSharePrefill();
+                $this->people->getRecentActivityInbox();
+                $this->people->getInfoById($this->account_id);
+                $this->internal->getDeviceCapabilitiesDecisions();
+                $this->direct->getPresences();
+                $this->discover->getExploreFeed();
+                $this->direct->getInbox();
+
                 $this->settings->set('last_login', time());
-
                 // Generate and save a new application session ID.
-                $this->session_id = Signatures::generateUUID(true);
+                $this->session_id = Signatures::generateUUID();
                 $this->settings->set('session_id', $this->session_id);
-
                 // Do the rest of the "user is re-opening the app" API flow...
-                $this->people->getBootstrapUsers();
-                $this->story->getReelsTrayFeed();
+                $this->tv->getTvGuide();
+
+                $this->internal->getLoomFetchConfig();
                 $this->direct->getRankedRecipients('reshare', true);
                 $this->direct->getRankedRecipients('raven', true);
                 $this->_registerPushChannels();
-                //$this->internal->getMegaphoneLog();
-                $this->direct->getInbox();
-                $this->direct->getPresences();
-                $this->people->getRecentActivityInbox();
-                $this->internal->getProfileNotice();
-                $this->discover->getExploreFeed();
             }
 
             // Users normally resume their sessions, meaning that their
@@ -1133,6 +1156,8 @@ class Instagram implements ExperimentsInterface
         // cookies to the storage, to ensure that the storage doesn't miss them
         // in case something bad happens to PHP after this moment.
         $this->client->saveCookieJar();
+
+        return null;
     }
 
     /**

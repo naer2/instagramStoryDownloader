@@ -103,4 +103,21 @@ class Creative extends RequestCollection
 
         return $request->getResponse(new Response\FaceEffectsResponse());
     }
+
+    /**
+     * Send supported capabilities.
+     *
+     * @throws \InstagramAPI\Exception\InstagramException
+     *
+     * @return \InstagramAPI\Response\WriteSuppotedCapabilitiesResponse
+     */
+    public function sendSupportedCapabilities()
+    {
+        return $this->ig->request('creatives/write_supported_capabilities/')
+            ->addPost('supported_capabilities_new', json_encode(Constants::SUPPORTED_CAPABILITIES))
+            ->addPost('_uuid', $this->ig->uuid)
+            ->addPost('_uid', $this->ig->account_id)
+            ->addPost('_csrftoken', $this->ig->client->getToken())
+            ->getResponse(new Response\WriteSuppotedCapabilitiesResponse());
+    }
 }

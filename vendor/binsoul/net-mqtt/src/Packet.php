@@ -1,6 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt;
+
+use BinSoul\Net\Mqtt\Exception\EndOfStreamException;
+use BinSoul\Net\Mqtt\Exception\MalformedPacketException;
 
 /**
  * Represent a packet of the MQTT protocol.
@@ -27,12 +32,17 @@ interface Packet
      *
      * @return int
      */
-    public function getPacketType();
+    public function getPacketType(): int;
 
     /**
      * Reads the packet from the given stream.
      *
      * @param PacketStream $stream
+     *
+     * @return void
+     *
+     * @throws MalformedPacketException
+     * @throws EndOfStreamException
      */
     public function read(PacketStream $stream);
 
@@ -40,6 +50,8 @@ interface Packet
      * Writes the packet to the given stream.
      *
      * @param PacketStream $stream
+     *
+     * @return void
      */
     public function write(PacketStream $stream);
 
@@ -48,5 +60,5 @@ interface Packet
      *
      * @return string
      */
-    public function __toString();
+    public function __toString(): string;
 }

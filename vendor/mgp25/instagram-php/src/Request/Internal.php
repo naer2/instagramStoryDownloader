@@ -224,6 +224,8 @@ class Internal extends RequestCollection
         $storyQuestion = (isset($externalMetadata['story_questions']) && $targetFeed == Constants::FEED_STORY) ? $externalMetadata['story_questions'] : null;
         /** @var array Story countdown to use for the media. ONLY STORY MEDIA */
         $storyCountdown = (isset($externalMetadata['story_countdowns']) && $targetFeed == Constants::FEED_STORY) ? $externalMetadata['story_countdowns'] : null;
+        /** @var array Story fundraiser to use for the media. ONLY STORY MEDIA */
+        $storyFundraisers = (isset($externalMetadata['story_fundraisers']) && $targetFeed == Constants::FEED_STORY) ? $externalMetadata['story_fundraisers'] : null;
         /** @var array Attached media used to share media to story feed. ONLY STORY MEDIA! */
         $attachedMedia = (isset($externalMetadata['attached_media']) && $targetFeed == Constants::FEED_STORY) ? $externalMetadata['attached_media'] : null;
         /** @var array Product Tags to use for the media. ONLY FOR TIMELINE PHOTOS! */
@@ -249,8 +251,8 @@ class Internal extends RequestCollection
             ->addPost('_uuid', $this->ig->uuid)
             ->addPost('edits',
                 [
-                    'crop_original_size'    => [$photoWidth, $photoHeight],
-                    'crop_zoom'             => 1,
+                    'crop_original_size'    => [(float) $photoWidth, (float) $photoHeight],
+                    'crop_zoom'             => 1.0,
                     'crop_center'           => [0.0, -0.0],
                 ])
             ->addPost('device',
@@ -351,6 +353,11 @@ class Internal extends RequestCollection
                         ->addPost('story_countdowns', json_encode($storyCountdown))
                         ->addPost('story_sticker_ids', 'countdown_sticker_time');
                 }
+                if ($storyFundraisers !== null) {
+                    $request
+                        ->addPost('story_fundraisers', json_encode($storyFundraisers))
+                        ->addPost('story_sticker_ids', 'fundraiser_sticker_id');
+                }
                 if ($attachedMedia !== null) {
                     Utils::throwIfInvalidAttachedMedia($attachedMedia);
                     $request
@@ -360,7 +367,13 @@ class Internal extends RequestCollection
                 break;
             case Constants::FEED_DIRECT_STORY:
                 $request
-                    ->addPost('recipient_users', $internalMetadata->getDirectUsers())
+                    ->addPost('recipient_users', $internalMetadata->getDirectUsers());
+
+                if ($internalMetadata->getStoryViewMode() !== null) {
+                    $request->addPost('view_mode', $internalMetadata->getStoryViewMode());
+                }
+
+                $request
                     ->addPost('thread_ids', $internalMetadata->getDirectThreads())
                     ->addPost('client_shared_at', (string) time())
                     ->addPost('source_type', '3')
@@ -635,7 +648,7 @@ class Internal extends RequestCollection
         /** @var string[]|null Array of numerical UserPK IDs of people tagged in
          * your video. ONLY USED IN STORY VIDEOS! TODO: Actually, it's not even
          * implemented for stories. */
-        $usertags = (isset($externalMetadata['usertags']) && $targetFeed == Constants::FEED_STORY) ? $externalMetadata['usertags'] : null;
+        $usertags = (isset($externalMetadata['usertags'])) ? $externalMetadata['usertags'] : null;
         /** @var Response\Model\Location|null A Location object describing where
          * the media was taken. */
         $location = (isset($externalMetadata['location'])) ? $externalMetadata['location'] : null;
@@ -657,10 +670,14 @@ class Internal extends RequestCollection
         $storyQuestion = (isset($externalMetadata['story_questions']) && $targetFeed == Constants::FEED_STORY) ? $externalMetadata['story_questions'] : null;
         /** @var array Story countdown to use for the media. ONLY STORY MEDIA */
         $storyCountdown = (isset($externalMetadata['story_countdowns']) && $targetFeed == Constants::FEED_STORY) ? $externalMetadata['story_countdowns'] : null;
+        /** @var array Story fundraiser to use for the media. ONLY STORY MEDIA */
+        $storyFundraisers = (isset($externalMetadata['story_fundraisers']) && $targetFeed == Constants::FEED_STORY) ? $externalMetadata['story_fundraisers'] : null;
         /** @var array Attached media used to share media to story feed. ONLY STORY MEDIA! */
         $attachedMedia = (isset($externalMetadata['attached_media']) && $targetFeed == Constants::FEED_STORY) ? $externalMetadata['attached_media'] : null;
         /** @var array Title of the media uploaded to your channel. ONLY TV MEDIA! */
         $title = (isset($externalMetadata['title']) && $targetFeed == Constants::FEED_TV) ? $externalMetadata['title'] : null;
+        /** @var bool Whether or not a preview should be posted to your feed. ONLY TV MEDIA! */
+        $shareToFeed = (isset($externalMetadata['share_to_feed']) && $targetFeed == Constants::FEED_TV) ? $externalMetadata['share_to_feed'] : false;
 
         // Fix very bad external user-metadata values.
         if (!is_string($captionText)) {
@@ -700,6 +717,13 @@ class Internal extends RequestCollection
         switch ($targetFeed) {
             case Constants::FEED_TIMELINE:
                 $request->addPost('caption', $captionText);
+                if ($usertags !== null) {
+                    $in = [];
+                    foreach ($usertags as $userId) {
+                        $in[] = ['user_id' => $userId];
+                    }
+                    $request->addPost('usertags', $in);
+                }
                 break;
             case Constants::FEED_STORY:
                 if ($internalMetadata->isBestieMedia()) {
@@ -761,6 +785,11 @@ class Internal extends RequestCollection
                         ->addPost('story_countdowns', json_encode($storyCountdown))
                         ->addPost('story_sticker_ids', 'countdown_sticker_time');
                 }
+                if ($storyFundraisers !== null) {
+                    $request
+                        ->addPost('story_fundraisers', json_encode($storyFundraisers))
+                        ->addPost('story_sticker_ids', 'fundraiser_sticker_id');
+                }
                 if ($attachedMedia !== null) {
                     Utils::throwIfInvalidAttachedMedia($attachedMedia);
                     $request
@@ -771,7 +800,13 @@ class Internal extends RequestCollection
             case Constants::FEED_DIRECT_STORY:
                 $request
                     ->addPost('configure_mode', 2) // 2 - DIRECT_STORY_SHARE
-                    ->addPost('recipient_users', $internalMetadata->getDirectUsers())
+                    ->addPost('recipient_users', $internalMetadata->getDirectUsers());
+
+                if ($internalMetadata->getStoryViewMode() !== null) {
+                    $request->addPost('view_mode', $internalMetadata->getStoryViewMode());
+                }
+
+                $request
                     ->addPost('thread_ids', $internalMetadata->getDirectThreads())
                     ->addPost('story_media_creation_date', time() - mt_rand(10, 20))
                     ->addPost('client_shared_at', time() - mt_rand(3, 10))
@@ -780,6 +815,12 @@ class Internal extends RequestCollection
             case Constants::FEED_TV:
                 if ($title === null) {
                     throw new \InvalidArgumentException('You must provide a title for the media.');
+                }
+                if ($shareToFeed) {
+                    if ($internalMetadata->getVideoDetails()->getDurationInMsec() < 60000) {
+                        throw new \InvalidArgumentException('Your media must be at least a minute long to preview to feed.');
+                    }
+                    $request->addPost('igtv_share_preview_to_feed', '1');
                 }
                 $request
                     ->addPost('title', $title)
@@ -999,25 +1040,29 @@ class Internal extends RequestCollection
      * Perform an Instagram "feature synchronization" call for device.
      *
      * @param bool $prelogin
+     * @param bool $useCsrfToken
      *
      * @throws \InstagramAPI\Exception\InstagramException
      *
      * @return \InstagramAPI\Response\SyncResponse
      */
     public function syncDeviceFeatures(
-        $prelogin = false)
+        $prelogin = false,
+        $useCsrfToken = false)
     {
         $request = $this->ig->request('qe/sync/')
             ->addHeader('X-DEVICE-ID', $this->ig->uuid)
             ->addPost('id', $this->ig->uuid)
             ->addPost('experiments', Constants::LOGIN_EXPERIMENTS);
+        if ($useCsrfToken) {
+            $request->addPost('_csrftoken', $this->ig->client->getToken());
+        }
         if ($prelogin) {
             $request->setNeedsAuth(false);
         } else {
             $request
                 ->addPost('_uuid', $this->ig->uuid)
-                ->addPost('_uid', $this->ig->account_id)
-                ->addPost('_csrftoken', $this->ig->client->getToken());
+                ->addPost('_uid', $this->ig->account_id);
         }
 
         return $request->getResponse(new Response\SyncResponse());
@@ -1050,31 +1095,51 @@ class Internal extends RequestCollection
     /**
      * Send launcher sync.
      *
-     * @param bool $prelogin Indicates if the request is done before login request.
+     * @param bool $prelogin     Indicates if the request is done before login request.
+     * @param bool $idIsUuid     Indicates if the id parameter is the user's id.
+     * @param bool $useCsrfToken Indicates if a csrf token should be included.
+     * @param bool $loginConfigs Indicates if login configs should be used.
      *
      * @throws \InstagramAPI\Exception\InstagramException
      *
      * @return \InstagramAPI\Response\LauncherSyncResponse
      */
     public function sendLauncherSync(
-        $prelogin)
+        $prelogin,
+        $idIsUuid = true,
+        $useCsrfToken = false,
+        $loginConfigs = false)
     {
         $request = $this->ig->request('launcher/sync/')
-            ->addPost('_csrftoken', $this->ig->client->getToken())
-            ->addPost('configs', 'ig_android_felix_release_players,ig_user_mismatch_soft_error,ig_android_os_version_blocking_config,ig_android_carrier_signals_killswitch,fizz_ig_android,ig_mi_block_expired_events,ig_android_killswitch_perm_direct_ssim,ig_fbns_blocked');
+            ->addPost('configs', $loginConfigs ? Constants::LAUNCHER_LOGIN_CONFIGS : Constants::LAUNCHER_CONFIGS)
+            ->addPost('id', ($idIsUuid ? $this->ig->uuid : $this->ig->account_id));
+        if ($useCsrfToken) {
+            $request->addPost('_csrftoken', $this->ig->client->getToken());
+        }
         if ($prelogin) {
-            $request
-                ->setNeedsAuth(false)
-                ->addPost('id', $this->ig->uuid);
+            $request->setNeedsAuth(false);
         } else {
             $request
-                ->addPost('id', $this->ig->account_id)
                 ->addPost('_uuid', $this->ig->uuid)
-                ->addPost('_uid', $this->ig->account_id)
-                ->addPost('_csrftoken', $this->ig->client->getToken());
+                ->addPost('_uid', $this->ig->account_id);
         }
 
         return $request->getResponse(new Response\LauncherSyncResponse());
+    }
+
+    /**
+     * Get decisions about device capabilities.
+     *
+     * @throws \InstagramAPI\Exception\InstagramException
+     *
+     * @return \InstagramAPI\Response\CapabilitiesDecisionsResponse
+     */
+    public function getDeviceCapabilitiesDecisions()
+    {
+        return $this->ig->request('device_capabilities/decisions/')
+            ->addParam('signed_body', Signatures::generateSignature(json_encode((object) []).'.{}'))
+            ->addParam('ig_sig_key_version', Constants::SIG_KEY_VERSION)
+            ->getResponse(new Response\CapabilitiesDecisionsResponse());
     }
 
     /**
@@ -1112,8 +1177,8 @@ class Internal extends RequestCollection
     /**
      * Reads MSISDN header.
      *
-     * @param string      $usage    Desired usage, either "ig_select_app" or "default".
-     * @param string|null $subnoKey Encoded subscriber number.
+     * @param string $usage        Desired usage, either "ig_select_app" or "default".
+     * @param bool   $useCsrfToken (Optional) Decides to include a csrf token in this request.
      *
      * @throws \InstagramAPI\Exception\InstagramException
      *
@@ -1121,7 +1186,7 @@ class Internal extends RequestCollection
      */
     public function readMsisdnHeader(
         $usage,
-        $subnoKey = null)
+        $useCsrfToken = false)
     {
         $request = $this->ig->request('accounts/read_msisdn_header/')
             ->setNeedsAuth(false)
@@ -1129,8 +1194,8 @@ class Internal extends RequestCollection
             // UUID is used as device_id intentionally.
             ->addPost('device_id', $this->ig->uuid)
             ->addPost('mobile_subno_usage', $usage);
-        if ($subnoKey !== null) {
-            $request->addPost('subno_key', $subnoKey);
+        if ($useCsrfToken) {
+            $request->addPost('_csrftoken', $this->ig->client->getToken());
         }
 
         return $request->getResponse(new Response\MsisdnHeaderResponse());
@@ -1154,8 +1219,7 @@ class Internal extends RequestCollection
             ->setNeedsAuth(false)
             ->addPost('mobile_subno_usage', $usage)
             // UUID is used as device_id intentionally.
-            ->addPost('device_id', $this->ig->uuid)
-            ->addPost('_csrftoken', $this->ig->client->getToken());
+            ->addPost('device_id', $this->ig->uuid);
 
         return $request->getResponse(new Response\MsisdnHeaderResponse());
     }
@@ -1314,8 +1378,6 @@ class Internal extends RequestCollection
      */
     public function getQPFetch()
     {
-        $query = 'viewer() {eligible_promotions.surface_nux_id(<surface>).external_gating_permitted_qps(<external_gating_permitted_qps>).supports_client_filters(true) {edges {priority,time_range {start,end},node {id,promotion_id,max_impressions,triggers,contextual_filters {clause_type,filters {filter_type,unknown_action,value {name,required,bool_value,int_value, string_value},extra_datas {name,required,bool_value,int_value, string_value}},clauses {clause_type,filters {filter_type,unknown_action,value {name,required,bool_value,int_value, string_value},extra_datas {name,required,bool_value,int_value, string_value}},clauses {clause_type,filters {filter_type,unknown_action,value {name,required,bool_value,int_value, string_value},extra_datas {name,required,bool_value,int_value, string_value}},clauses {clause_type,filters {filter_type,unknown_action,value {name,required,bool_value,int_value, string_value},extra_datas {name,required,bool_value,int_value, string_value}}}}}},template {name,parameters {name,required,bool_value,string_value,color_value,}},creatives {title {text},content {text},footer {text},social_context {text},primary_action{title {text},url,limit,dismiss_promotion},secondary_action{title {text},url,limit,dismiss_promotion},dismiss_action{title {text},url,limit,dismiss_promotion},image.scale(<scale>) {uri,width,height}}}}}}';
-
         return $this->ig->request('qp/batch_fetch/')
             ->addPost('vc_policy', 'default')
             ->addPost('_csrftoken', $this->ig->client->getToken())
@@ -1323,13 +1385,35 @@ class Internal extends RequestCollection
             ->addPost('_uuid', $this->ig->uuid)
             ->addPost('surfaces_to_queries', json_encode(
                 [
-                    Constants::SURFACE_PARAM[0] => $query,
-                    Constants::SURFACE_PARAM[1] => $query,
+                    Constants::BATCH_SURFACES[0][0] => Constants::BATCH_QUERY,
+                    Constants::BATCH_SURFACES[1][0] => Constants::BATCH_QUERY,
+                    Constants::BATCH_SURFACES[2][0] => Constants::BATCH_QUERY,
                 ]
             ))
-            ->addPost('version', 1)
-            ->addPost('scale', 2)
+            ->addPost('surfaces_to_triggers', json_encode(
+                [
+                    Constants::BATCH_SURFACES[0][0] => Constants::BATCH_SURFACES[0][1],
+                    Constants::BATCH_SURFACES[1][0] => Constants::BATCH_SURFACES[1][1],
+                    Constants::BATCH_SURFACES[2][0] => Constants::BATCH_SURFACES[2][1],
+                ]
+            ))
+            ->addPost('version', Constants::BATCH_VERSION)
+            ->addPost('scale', Constants::BATCH_SCALE)
             ->getResponse(new Response\FetchQPDataResponse());
+    }
+
+    /**
+     * Get Arlink download info.
+     *
+     * @throws \InstagramAPI\Exception\InstagramException
+     *
+     * @return \InstagramAPI\Response\ArlinkDownloadInfoResponse
+     */
+    public function getArlinkDownloadInfo()
+    {
+        return $this->ig->request('users/arlink_download_info/')
+            ->addParam('version_override', '2.2.1')
+            ->getResponse(new Response\ArlinkDownloadInfoResponse());
     }
 
     /**
@@ -1345,6 +1429,17 @@ class Internal extends RequestCollection
             ->addParam('signed_body', Signatures::generateSignature(json_encode((object) []).'.{}'))
             ->addParam('ig_sig_key_version', Constants::SIG_KEY_VERSION)
             ->getResponse(new Response\QPCooldownsResponse());
+    }
+
+    public function storeClientPushPermissions()
+    {
+        return $this->ig->request('notifications/store_client_push_permissions/')
+            ->setSignedPost(false)
+            ->addPost('enabled', 'true')
+            ->addPost('_csrftoken', $this->ig->client->getToken())
+            ->addPost('device_id', $this->ig->device_id)
+            ->addPost('_uuid', $this->ig->uuid)
+            ->getResponse(new Response\GenericResponse());
     }
 
     /**
@@ -1415,6 +1510,7 @@ class Internal extends RequestCollection
 
         return $this->ig->request('media/seen/')
             ->setVersion(2)
+            ->setIsBodyCompressed(true)
             ->addPost('_uuid', $this->ig->uuid)
             ->addPost('_uid', $this->ig->account_id)
             ->addPost('_csrftoken', $this->ig->client->getToken())
@@ -1425,8 +1521,8 @@ class Internal extends RequestCollection
             ->addPost('live_vods_skipped', [])
             ->addPost('nuxes', [])
             ->addPost('nuxes_skipped', [])
-            ->addParam('reel', 1)
-            ->addParam('live_vod', 0)
+//            ->addParam('reel', 1)
+//            ->addParam('live_vod', 0)
             ->getResponse(new Response\MediaSeenResponse());
     }
 

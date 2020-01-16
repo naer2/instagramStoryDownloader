@@ -60,17 +60,19 @@
         "winbox/args": "1.0.0"
     },
     "suggest": {
-        "ext-event": "Installing PHP's native Event extension enables faster Realtime class event handling."
+        "ext-event": "Installing PHP's native Event extension enables faster Realtime class event handling.",
+        "ext-pdo": "Installing ext-pdo allows for Postgres settings storage.",
+        "ext-redis": "Installing ext-pdo allows for Redis settings storage."
     },
     "require-dev": {
         "react/http": "^0.7.2",
-        "friendsofphp/php-cs-fixer": "^2.8.0",
+        "friendsofphp/php-cs-fixer": "^2.11.0",
         "monolog/monolog": "^1.23",
         "phpunit/phpunit": "^5.7 || ^6.2"
     },
     "scripts": {
         "codestyle": [
-            "lazydoctor -c composer.json -pfo >/dev/null",
+            "lazydoctor -c composer.json -pfo",
             "php-cs-fixer fix --config=.php_cs.dist --allow-risky yes",
             "php devtools/checkStyle.php x"
         ],

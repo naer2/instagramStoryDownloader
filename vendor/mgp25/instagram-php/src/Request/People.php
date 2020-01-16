@@ -55,8 +55,8 @@ class People extends RequestCollection
      *
      * NOTE: The real app only uses this endpoint for profiles opened via "@mentions".
      *
-     * @param string      $username Username as string (NOT as a numerical ID).
-     * @param string|null $module   From which app module (page) you have opened the profile.
+     * @param string $username Username as string (NOT as a numerical ID).
+     * @param string $module   From which app module (page) you have opened the profile.
      *
      * @throws \InstagramAPI\Exception\InstagramException
      *
@@ -66,14 +66,11 @@ class People extends RequestCollection
      */
     public function getInfoByName(
         $username,
-        $module = null)
+        $module = 'feed_timeline')
     {
-        $request = $this->ig->request("users/{$username}/usernameinfo/");
-        if ($module !== null) {
-            $request->addParam('from_module', $module);
-        }
-
-        return $request->getResponse(new Response\UserInfoResponse());
+        return $this->ig->request("users/{$username}/usernameinfo/")
+            ->addParam('from_module', $module)
+            ->getResponse(new Response\UserInfoResponse());
     }
 
     /**
@@ -119,14 +116,21 @@ class People extends RequestCollection
      * liking your posts, commenting on your posts, tagging you in photos or in
      * comments, people who started following you, etc.
      *
+     * @param bool $prefetch Indicates if request is called due to prefetch.
+     *
      * @throws \InstagramAPI\Exception\InstagramException
      *
      * @return \InstagramAPI\Response\ActivityNewsResponse
      */
-    public function getRecentActivityInbox()
+    public function getRecentActivityInbox(
+        $prefetch = false)
     {
-        return $this->ig->request('news/inbox/')
-            ->getResponse(new Response\ActivityNewsResponse());
+        $request = $this->ig->request('news/inbox/');
+        if ($prefetch) {
+            $request->addHeader('X-IG-Prefetch-Request', 'foreground');
+        }
+
+        return $request->getResponse(new Response\ActivityNewsResponse());
     }
 
     /**
@@ -165,11 +169,11 @@ class People extends RequestCollection
     public function getBootstrapUsers()
     {
         $surfaces = [
-            'coefficient_direct_closed_friends_ranking',
-            'coefficient_direct_recipients_ranking_variant_2',
+            'autocomplete_user_list',
+            'coefficient_besties_list_ranking',
             'coefficient_rank_recipient_user_suggestion',
             'coefficient_ios_section_test_bootstrap_ranking',
-            'autocomplete_user_list',
+            'coefficient_direct_recipients_ranking_variant_2',
         ];
 
         try {
@@ -770,44 +774,58 @@ class People extends RequestCollection
     /**
      * Follow a user.
      *
-     * @param string $userId Numerical UserPK ID.
+     * @param string      $userId  Numerical UserPK ID.
+     * @param string|null $mediaId The media ID in Instagram's internal format (ie "3482384834_43294").
      *
      * @throws \InstagramAPI\Exception\InstagramException
      *
      * @return \InstagramAPI\Response\FriendshipResponse
      */
     public function follow(
-        $userId)
+        $userId,
+        $mediaId = null)
     {
-        return $this->ig->request("friendships/create/{$userId}/")
+        $request = $this->ig->request("friendships/create/{$userId}/")
             ->addPost('_uuid', $this->ig->uuid)
             ->addPost('_uid', $this->ig->account_id)
             ->addPost('_csrftoken', $this->ig->client->getToken())
             ->addPost('user_id', $userId)
             ->addPost('radio_type', 'wifi-none')
-            ->addPost('device_id', $this->ig->device_id)
-            ->getResponse(new Response\FriendshipResponse());
+            ->addPost('device_id', $this->ig->device_id);
+
+        if ($mediaId !== null) {
+            $request->addPost('media_id_attribution', $mediaId);
+        }
+
+        return $request->getResponse(new Response\FriendshipResponse());
     }
 
     /**
      * Unfollow a user.
      *
-     * @param string $userId Numerical UserPK ID.
+     * @param string      $userId  Numerical UserPK ID.
+     * @param string|null $mediaId The media ID in Instagram's internal format (ie "3482384834_43294").
      *
      * @throws \InstagramAPI\Exception\InstagramException
      *
      * @return \InstagramAPI\Response\FriendshipResponse
      */
     public function unfollow(
-        $userId)
+        $userId,
+        $mediaId = null)
     {
-        return $this->ig->request("friendships/destroy/{$userId}/")
+        $request = $this->ig->request("friendships/destroy/{$userId}/")
             ->addPost('_uuid', $this->ig->uuid)
             ->addPost('_uid', $this->ig->account_id)
             ->addPost('_csrftoken', $this->ig->client->getToken())
             ->addPost('user_id', $userId)
-            ->addPost('radio_type', 'wifi-none')
-            ->getResponse(new Response\FriendshipResponse());
+            ->addPost('radio_type', 'wifi-none');
+
+        if ($mediaId !== null) {
+            $request->addPost('media_id_attribution', $mediaId);
+        }
+
+        return $request->getResponse(new Response\FriendshipResponse());
     }
 
     /**
@@ -1069,6 +1087,7 @@ class People extends RequestCollection
      * Block a user's ability to see your stories.
      *
      * @param string $userId Numerical UserPK ID.
+     * @param string $source (optional) The source where this request was triggered.
      *
      * @throws \InstagramAPI\Exception\InstagramException
      *
@@ -1077,13 +1096,14 @@ class People extends RequestCollection
      * @see People::muteFriendStory()
      */
     public function blockMyStory(
-        $userId)
+        $userId,
+        $source = 'profile')
     {
         return $this->ig->request("friendships/block_friend_reel/{$userId}/")
             ->addPost('_uuid', $this->ig->uuid)
             ->addPost('_uid', $this->ig->account_id)
             ->addPost('_csrftoken', $this->ig->client->getToken())
-            ->addPost('source', 'profile')
+            ->addPost('source', $source)
             ->getResponse(new Response\FriendshipResponse());
     }
 
@@ -1229,5 +1249,19 @@ class People extends RequestCollection
             ->addPost('remove', $remove)
             ->addPost('add', $add)
             ->getResponse(new Response\GenericResponse());
+    }
+
+    /**
+     * Gets a list of ranked users to display in Android's share UI.
+     *
+     * @throws \InstagramAPI\Exception\InstagramException
+     *
+     * @return \InstagramAPI\Response\SharePrefillResponse
+     */
+    public function getSharePrefill()
+    {
+        return $this->ig->request('banyan/banyan/')
+            ->addParam('views', '["story_share_sheet","threads_people_picker","reshare_share_sheet"]')
+            ->getResponse(new Response\SharePrefillResponse());
     }
 }

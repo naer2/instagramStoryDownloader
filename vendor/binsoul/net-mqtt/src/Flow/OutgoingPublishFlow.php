@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt\Flow;
 
-use BinSoul\Net\Mqtt\IdentifierGenerator;
 use BinSoul\Net\Mqtt\Message;
 use BinSoul\Net\Mqtt\Packet;
 use BinSoul\Net\Mqtt\Packet\PublishAckPacket;
@@ -10,6 +11,8 @@ use BinSoul\Net\Mqtt\Packet\PublishCompletePacket;
 use BinSoul\Net\Mqtt\Packet\PublishReceivedPacket;
 use BinSoul\Net\Mqtt\Packet\PublishReleasePacket;
 use BinSoul\Net\Mqtt\Packet\PublishRequestPacket;
+use BinSoul\Net\Mqtt\PacketFactory;
+use BinSoul\Net\Mqtt\PacketIdentifierGenerator;
 
 /**
  * Represents a flow starting with an outgoing PUBLISH packet.
@@ -26,25 +29,29 @@ class OutgoingPublishFlow extends AbstractFlow
     /**
      * Constructs an instance of this class.
      *
-     * @param Message             $message
-     * @param IdentifierGenerator $generator
+     * @param PacketFactory             $packetFactory
+     * @param Message                   $message
+     * @param PacketIdentifierGenerator $generator
      */
-    public function __construct(Message $message, IdentifierGenerator $generator)
+    public function __construct(PacketFactory $packetFactory, Message $message, PacketIdentifierGenerator $generator)
     {
+        parent::__construct($packetFactory);
+
         $this->message = $message;
         if ($this->message->getQosLevel() > 0) {
-            $this->identifier = $generator->generatePacketID();
+            $this->identifier = $generator->generatePacketIdentifier();
         }
     }
 
-    public function getCode()
+    public function getCode(): string
     {
         return 'publish';
     }
 
     public function start()
     {
-        $packet = new PublishRequestPacket();
+        /** @var PublishRequestPacket $packet */
+        $packet = $this->generatePacket(Packet::TYPE_PUBLISH);
         $packet->setTopic($this->message->getTopic());
         $packet->setPayload($this->message->getPayload());
         $packet->setRetained($this->message->isRetained());
@@ -60,7 +67,7 @@ class OutgoingPublishFlow extends AbstractFlow
         return $packet;
     }
 
-    public function accept(Packet $packet)
+    public function accept(Packet $packet): bool
     {
         if ($this->message->getQosLevel() === 0) {
             return false;
@@ -69,14 +76,18 @@ class OutgoingPublishFlow extends AbstractFlow
         $packetType = $packet->getPacketType();
 
         if ($packetType === Packet::TYPE_PUBACK && $this->message->getQosLevel() === 1) {
-            /* @var PublishAckPacket $packet */
+            /** @var PublishAckPacket $packet */
             return $packet->getIdentifier() === $this->identifier;
-        } elseif ($this->message->getQosLevel() === 2) {
+        }
+
+        if ($this->message->getQosLevel() === 2) {
             if ($packetType === Packet::TYPE_PUBREC) {
-                /* @var PublishReceivedPacket $packet */
+                /** @var PublishReceivedPacket $packet */
                 return $packet->getIdentifier() === $this->identifier;
-            } elseif ($this->receivedPubRec && $packetType === Packet::TYPE_PUBCOMP) {
-                /* @var PublishCompletePacket $packet */
+            }
+
+            if ($this->receivedPubRec && $packetType === Packet::TYPE_PUBCOMP) {
+                /** @var PublishCompletePacket $packet */
                 return $packet->getIdentifier() === $this->identifier;
             }
         }
@@ -93,10 +104,13 @@ class OutgoingPublishFlow extends AbstractFlow
         } elseif ($packetType === Packet::TYPE_PUBREC) {
             $this->receivedPubRec = true;
 
-            $response = new PublishReleasePacket();
+            /** @var PublishReleasePacket $response */
+            $response = $this->generatePacket(Packet::TYPE_PUBREL);
             $response->setIdentifier($this->identifier);
 
             return $response;
         }
+
+        return null;
     }
 }

@@ -32,7 +32,7 @@ class Shopping extends RequestCollection
             ->addParam('source_media_id', $mediaId)
             ->addParam('merchant_id', $merchantId)
             ->addParam('device_width', $deviceWidth)
-            ->addParam('hero_carousel_enabled', false)
+            ->addParam('hero_carousel_enabled', true)
             ->getResponse(new Response\OnTagProductResponse());
     }
 

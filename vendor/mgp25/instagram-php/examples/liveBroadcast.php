@@ -49,12 +49,7 @@ try {
     $broadcastId = $stream->getBroadcastId();
     $ig->live->start($broadcastId);
 
-    // Switch from RTMPS to RTMP upload URL, since RTMPS doesn't work well.
-    $streamUploadUrl = preg_replace(
-        '#^rtmps://([^/]+?):443/#ui',
-        'rtmp://\1:80/',
-        $stream->getUploadUrl()
-    );
+    $streamUploadUrl = $stream->getUploadUrl();
 
     // Broadcast the entire video file.
     // NOTE: The video is broadcasted asynchronously (in the background).
@@ -88,13 +83,38 @@ try {
         }
 
         // Get broadcast heartbeat and viewer count.
-        $ig->live->getHeartbeatAndViewerCount($broadcastId);
+        $heartbeatResponse = $ig->live->getHeartbeatAndViewerCount($broadcastId);
+
+        // Check to see if the livestream has been flagged for a policy violation.
+        if ($heartbeatResponse->isIsPolicyViolation() && (int) $heartbeatResponse->getIsPolicyViolation() === 1) {
+            echo 'Instagram has flagged your content as a policy violation with the following reason: '.($heartbeatResponse->getPolicyViolationReason() == null ? 'Unknown' : $heartbeatResponse->getPolicyViolationReason())."\n";
+            // Change this to false if disagree with the policy violation and would would like to continue streaming.
+            // - Note: In this example, the violation is always accepted.
+            //   In your use case, you may want to prompt the user if
+            //   they would like to accept or refute the policy violation.
+            if (true) {
+                // Get the final viewer list of the broadcast.
+                $ig->live->getFinalViewerList($broadcastId);
+                // End the broadcast stream while acknowledging the copyright warning given.
+                $ig->live->end($broadcastId, true);
+                exit(0);
+            }
+            // Acknowledges the copyright warning and allows you to continue streaming.
+            // - Note: This may allow the copyright holder to view your livestream
+            //   regardless of your account privacy or if you archive it.
+            $ig->live->resumeBroadcastAfterContentMatch($broadcastId);
+        }
 
         // Get broadcast like count.
         // - The latest like timestamp will be required for the next
         //   getLikeCount() request.
         $likeCountResponse = $ig->live->getLikeCount($broadcastId, $lastLikeTs);
         $lastLikeTs = $likeCountResponse->getLikeTs();
+
+        // Get the join request counts.
+        // - This doesn't add support for live-with-friends. Rather,
+        //   this is only here to emulate the app's livestream flow.
+        $ig->live->getJoinRequestCounts($broadcastId);
 
         sleep(2);
     } while ($broadcastProcess->isRunning());

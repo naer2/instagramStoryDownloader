@@ -1,6 +1,6 @@
-# ![logo](/examples/assets/instagram.png) Instagram PHP [![Latest Stable Version](https://poser.pugx.org/mgp25/instagram-php/v/stable)](https://packagist.org/packages/mgp25/instagram-php) [![Total Downloads](https://poser.pugx.org/mgp25/instagram-php/downloads)](https://packagist.org/packages/mgp25/instagram-php) ![compatible](https://img.shields.io/badge/PHP%207-Compatible-brightgreen.svg) [![License](https://poser.pugx.org/mgp25/instagram-php/license)](https://packagist.org/packages/mgp25/instagram-php)
+# Instagram-API [![Latest Stable Version](https://poser.pugx.org/mgp25/instagram-php/v/stable)](https://packagist.org/packages/mgp25/instagram-php) [![Total Downloads](https://poser.pugx.org/mgp25/instagram-php/downloads)](https://packagist.org/packages/mgp25/instagram-php) ![compatible](https://img.shields.io/badge/PHP%207-Compatible-brightgreen.svg) [![License](https://poser.pugx.org/mgp25/instagram-php/license)](https://packagist.org/packages/mgp25/instagram-php)
 
-This is Instagram's private API. It has almost all the features the Instagram app has, including media upload, direct messaging, stories and more.
+This is a PHP library which emulates Instagram's Private API. This library is packed full with almost all the features from the Instagram Android App. This includes media uploads, direct messaging, stories and more.
 
 **Read the [wiki](https://github.com/mgp25/Instagram-API/wiki)** and previous issues before opening a new one! Maybe your issue has already been answered.
 
@@ -26,8 +26,14 @@ This is Instagram's private API. It has almost all the features the Instagram ap
 ----------
 ## Installation
 
-### Using Composer
+### Dependencies
 
+Install/enable the required php extensions and dependencies. You can learn how to do so [here](https://github.com/mgp25/Instagram-API/wiki/Dependencies).
+
+### Install this library
+We use composer to distribute our code effectively and easily. If you do not already have composer installed, you can download and install it here [here](https://getcomposer.org/download/).
+
+Once you have composer installed, you can do the following:
 ```sh
 composer require mgp25/instagram-php
 ```
@@ -38,15 +44,11 @@ require __DIR__.'/../vendor/autoload.php';
 $ig = new \InstagramAPI\Instagram();
 ```
 
-If you want to test new and possibly unstable code that is in the master branch, and which hasn't yet been released, then you can use master instead (at your own risk):
+If you want to test new and possibly unstable code that is in the master branch, and which hasn't yet been released, then you can do the following (at your own risk):
 
 ```sh
 composer require mgp25/instagram-php dev-master
 ```
-
-### I don't have Composer
-
-You can download it [here](https://getcomposer.org/download/).
 
 #### _Warning about moving data to a different server_
 
@@ -103,7 +105,7 @@ library _without_ open-sourcing your own project. The modified license
 is granted to certain entities, at _our_ discretion, and for a _limited_ period
 of time (unless otherwise agreed), pursuant to our terms. Currently, we are
 granting this license to all
-"[premium subscribers](https://github.com/mgp25/Instagram-API/issues/1231)" for
+"[premium subscribers](https://github.com/mgp25/Instagram-API/issues/2655)" for
 the duration of their subscriptions. You can become a premium subscriber by
 either contributing substantial amounts of high-quality code, or by subscribing
 for a fee. This licensing ensures fairness and stimulates the continued growth

@@ -33,7 +33,7 @@ try {
     do {
         // Request the page corresponding to maxId.
         // Note that we are using the same rank token for all pages.
-        $response = $ig->hashtag->getFeed($tag, $rankToken, $maxId);
+        $response = $ig->hashtag->getSection($tag, $rankToken, null, null, $maxId);
 
         // In this example we're simply printing the IDs of this page's items.
         foreach ($response->getItems() as $item) {

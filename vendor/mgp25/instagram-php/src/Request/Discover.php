@@ -2,7 +2,6 @@
 
 namespace InstagramAPI\Request;
 
-use InstagramAPI\Constants;
 use InstagramAPI\Exception\RequestHeadersTooLargeException;
 use InstagramAPI\Response;
 
@@ -14,6 +13,11 @@ class Discover extends RequestCollection
     /**
      * Get Explore tab feed.
      *
+     * @param string|null $clusterId  The cluster ID. Default page: 'explore_all:0', Animals: 'hashtag_inspired:1',
+     *                                Style: 'hashtag_inspired:26', Comics: 'hashtag_inspired:20', Travel: 'hashtag_inspired:28',
+     *                                Architecture: 'hashtag_inspired:18', Beauty: 'hashtag_inspired:3', DIY: 'hashtag_inspired:21',
+     *                                Auto: 'hashtag_inspired:19', Music: 'hashtag_inspired:11', Nature: 'hashtag_inspired:24',
+     *                                Decor: 'hashtag_inspired:5', Dance: 'hashtag_inspired:22'.
      * @param string|null $maxId      Next "maximum ID", used for pagination.
      * @param bool        $isPrefetch Whether this is the first fetch; we'll ignore maxId if TRUE.
      *
@@ -22,16 +26,20 @@ class Discover extends RequestCollection
      * @return \InstagramAPI\Response\ExploreResponse
      */
     public function getExploreFeed(
+        $clusterId = null,
         $maxId = null,
         $isPrefetch = false)
     {
-        $request = $this->ig->request('discover/explore/')
+        $request = $this->ig->request('discover/topical_explore/')
             ->addParam('is_prefetch', $isPrefetch)
-            ->addParam('is_from_promote', false)
+            ->addParam('omit_cover_media', true)
+            ->addParam('use_sectional_payload', true)
             ->addParam('timezone_offset', date('Z'))
             ->addParam('session_id', $this->ig->session_id)
-            ->addParam('supported_capabilities_new', json_encode(Constants::SUPPORTED_CAPABILITIES));
-
+            ->addParam('include_fixed_destinations', true);
+        if ($clusterId !== null) {
+            $request->addParam('cluster_id', $clusterId);
+        }
         if (!$isPrefetch) {
             if ($maxId === null) {
                 $maxId = 0;

@@ -5,10 +5,10 @@ namespace React\Dns\Resolver;
 use React\Cache\ArrayCache;
 use React\Cache\CacheInterface;
 use React\Dns\Config\HostsFile;
-use React\Dns\Query\CachedExecutor;
+use React\Dns\Query\CachingExecutor;
+use React\Dns\Query\CoopExecutor;
 use React\Dns\Query\ExecutorInterface;
 use React\Dns\Query\HostsFileExecutor;
-use React\Dns\Query\RecordCache;
 use React\Dns\Query\RetryExecutor;
 use React\Dns\Query\TimeoutExecutor;
 use React\Dns\Query\UdpTransportExecutor;
@@ -26,8 +26,9 @@ class Factory
 
     public function createCached($nameserver, LoopInterface $loop, CacheInterface $cache = null)
     {
+        // default to keeping maximum of 256 responses in cache unless explicitly given
         if (!($cache instanceof CacheInterface)) {
-            $cache = new ArrayCache();
+            $cache = new ArrayCache(256);
         }
 
         $nameserver = $this->addPortToServerIfMissing($nameserver);
@@ -77,12 +78,12 @@ class Factory
 
     protected function createRetryExecutor(LoopInterface $loop)
     {
-        return new RetryExecutor($this->createExecutor($loop));
+        return new CoopExecutor(new RetryExecutor($this->createExecutor($loop)));
     }
 
     protected function createCachedExecutor(LoopInterface $loop, CacheInterface $cache)
     {
-        return new CachedExecutor($this->createRetryExecutor($loop), new RecordCache($cache));
+        return new CachingExecutor($this->createRetryExecutor($loop), $cache);
     }
 
     protected function addPortToServerIfMissing($nameserver)

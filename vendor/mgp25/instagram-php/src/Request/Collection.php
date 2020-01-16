@@ -69,10 +69,11 @@ class Collection extends RequestCollection
      */
     public function create(
         $name,
-        $moduleName = 'collection_create')
+        $moduleName = 'feed_saved_add_to_collection')
     {
         return $this->ig->request('collections/create/')
             ->addPost('module_name', $moduleName)
+            ->addPost('added_media_ids', '[]')
             ->addPost('collection_visibility', '0') //Instagram is planning for public collections soon
             ->addPost('_csrftoken', $this->ig->client->getToken())
             ->addPost('_uid', $this->ig->account_id)

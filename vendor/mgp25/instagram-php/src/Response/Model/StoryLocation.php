@@ -12,6 +12,7 @@ use InstagramAPI\Response\PropertyCollection;
  * @method float getHeight()
  * @method int getIsHidden()
  * @method int getIsPinned()
+ * @method int getIsSticker()
  * @method Location getLocation()
  * @method float getRotation()
  * @method float getWidth()
@@ -22,6 +23,7 @@ use InstagramAPI\Response\PropertyCollection;
  * @method bool isHeight()
  * @method bool isIsHidden()
  * @method bool isIsPinned()
+ * @method bool isIsSticker()
  * @method bool isLocation()
  * @method bool isRotation()
  * @method bool isWidth()
@@ -32,6 +34,7 @@ use InstagramAPI\Response\PropertyCollection;
  * @method $this setHeight(float $value)
  * @method $this setIsHidden(int $value)
  * @method $this setIsPinned(int $value)
+ * @method $this setIsSticker(int $value)
  * @method $this setLocation(Location $value)
  * @method $this setRotation(float $value)
  * @method $this setWidth(float $value)
@@ -42,6 +45,7 @@ use InstagramAPI\Response\PropertyCollection;
  * @method $this unsetHeight()
  * @method $this unsetIsHidden()
  * @method $this unsetIsPinned()
+ * @method $this unsetIsSticker()
  * @method $this unsetLocation()
  * @method $this unsetRotation()
  * @method $this unsetWidth()
@@ -53,8 +57,9 @@ class StoryLocation extends AutoPropertyMapper
 {
     const JSON_PROPERTY_MAP = [
         PropertyCollection\Sticker::class,
-        'location'    => 'Location',
-        'attribution' => 'string',
-        'is_hidden'   => 'int',
+        'location'     => 'Location',
+        'attribution'  => 'string',
+        'is_hidden'    => 'int',
+        'is_sticker'   => 'int',
     ];
 }

@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt\Flow;
 
-use BinSoul\Net\Mqtt\IdentifierGenerator;
 use BinSoul\Net\Mqtt\Packet;
 use BinSoul\Net\Mqtt\Packet\SubscribeRequestPacket;
 use BinSoul\Net\Mqtt\Packet\SubscribeResponsePacket;
+use BinSoul\Net\Mqtt\PacketFactory;
+use BinSoul\Net\Mqtt\PacketIdentifierGenerator;
 use BinSoul\Net\Mqtt\Subscription;
 
 /**
@@ -21,23 +24,27 @@ class OutgoingSubscribeFlow extends AbstractFlow
     /**
      * Constructs an instance of this class.
      *
-     * @param Subscription[]      $subscriptions
-     * @param IdentifierGenerator $generator
+     * @param PacketFactory             $packetFactory
+     * @param Subscription[]            $subscriptions
+     * @param PacketIdentifierGenerator $generator
      */
-    public function __construct(array $subscriptions, IdentifierGenerator $generator)
+    public function __construct(PacketFactory $packetFactory, array $subscriptions, PacketIdentifierGenerator $generator)
     {
+        parent::__construct($packetFactory);
+
         $this->subscriptions = array_values($subscriptions);
-        $this->identifier = $generator->generatePacketID();
+        $this->identifier = $generator->generatePacketIdentifier();
     }
 
-    public function getCode()
+    public function getCode(): string
     {
         return 'subscribe';
     }
 
     public function start()
     {
-        $packet = new SubscribeRequestPacket();
+        /** @var SubscribeRequestPacket $packet */
+        $packet = $this->generatePacket(Packet::TYPE_SUBSCRIBE);
         $packet->setTopic($this->subscriptions[0]->getFilter());
         $packet->setQosLevel($this->subscriptions[0]->getQosLevel());
         $packet->setIdentifier($this->identifier);
@@ -45,19 +52,28 @@ class OutgoingSubscribeFlow extends AbstractFlow
         return $packet;
     }
 
-    public function accept(Packet $packet)
+    public function accept(Packet $packet): bool
     {
         if ($packet->getPacketType() !== Packet::TYPE_SUBACK) {
             return false;
         }
 
-        /* @var SubscribeResponsePacket $packet */
+        /** @var SubscribeResponsePacket $packet */
         return $packet->getIdentifier() === $this->identifier;
     }
 
     public function next(Packet $packet)
     {
-        /* @var SubscribeResponsePacket $packet */
+        if (!($packet instanceof SubscribeResponsePacket)) {
+            throw new \RuntimeException(
+                sprintf(
+                    'SUBACK: Expected packet of class %s but got %s.',
+                    SubscribeResponsePacket::class,
+                    get_class($packet)
+                )
+            );
+        }
+
         $returnCodes = $packet->getReturnCodes();
         if (count($returnCodes) !== count($this->subscriptions)) {
             throw new \LogicException(
@@ -73,10 +89,12 @@ class OutgoingSubscribeFlow extends AbstractFlow
             if ($packet->isError($code)) {
                 $this->fail(sprintf('Failed to subscribe to "%s".', $this->subscriptions[$index]->getFilter()));
 
-                return;
+                return null;
             }
         }
 
         $this->succeed($this->subscriptions[0]);
+
+        return null;
     }
 }

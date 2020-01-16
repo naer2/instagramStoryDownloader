@@ -18,7 +18,7 @@ class PhotoDetails extends MediaDetails
      *
      * @see https://help.instagram.com/1631821640426723
      */
-    const MIN_WIDTH = 320;
+    const MIN_WIDTH = 600;
 
     /**
      * Maximum allowed image width.
@@ -32,7 +32,7 @@ class PhotoDetails extends MediaDetails
      *
      * @var int
      */
-    const MAX_WIDTH = 1080;
+    const MAX_WIDTH = 1936;
 
     /**
      * Default orientation to use if no EXIF JPG orientation exists.

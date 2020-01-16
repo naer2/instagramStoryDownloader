@@ -9,16 +9,16 @@ use InstagramAPI\AutoPropertyMapper;
  *
  * @method Location getLocation()
  * @method mixed getMediaBundles()
- * @method mixed getSubtitle()
- * @method mixed getTitle()
+ * @method string getSubtitle()
+ * @method string getTitle()
  * @method bool isLocation()
  * @method bool isMediaBundles()
  * @method bool isSubtitle()
  * @method bool isTitle()
  * @method $this setLocation(Location $value)
  * @method $this setMediaBundles(mixed $value)
- * @method $this setSubtitle(mixed $value)
- * @method $this setTitle(mixed $value)
+ * @method $this setSubtitle(string $value)
+ * @method $this setTitle(string $value)
  * @method $this unsetLocation()
  * @method $this unsetMediaBundles()
  * @method $this unsetSubtitle()
@@ -28,8 +28,8 @@ class LocationItem extends AutoPropertyMapper
 {
     const JSON_PROPERTY_MAP = [
         'media_bundles' => '',
-        'subtitle'      => '',
+        'subtitle'      => 'string',
         'location'      => 'Location',
-        'title'         => '',
+        'title'         => 'string',
     ];
 }

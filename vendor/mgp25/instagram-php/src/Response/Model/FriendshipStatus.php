@@ -15,6 +15,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool getIsBlockingReel()
  * @method bool getIsMutingReel()
  * @method bool getIsPrivate()
+ * @method bool getIsRestricted()
  * @method bool getMuting()
  * @method bool getOutgoingRequest()
  * @method bool isBlocking()
@@ -25,6 +26,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isIsBlockingReel()
  * @method bool isIsMutingReel()
  * @method bool isIsPrivate()
+ * @method bool isIsRestricted()
  * @method bool isMuting()
  * @method bool isOutgoingRequest()
  * @method $this setBlocking(bool $value)
@@ -35,6 +37,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setIsBlockingReel(bool $value)
  * @method $this setIsMutingReel(bool $value)
  * @method $this setIsPrivate(bool $value)
+ * @method $this setIsRestricted(bool $value)
  * @method $this setMuting(bool $value)
  * @method $this setOutgoingRequest(bool $value)
  * @method $this unsetBlocking()
@@ -45,6 +48,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetIsBlockingReel()
  * @method $this unsetIsMutingReel()
  * @method $this unsetIsPrivate()
+ * @method $this unsetIsRestricted()
  * @method $this unsetMuting()
  * @method $this unsetOutgoingRequest()
  */
@@ -58,6 +62,7 @@ class FriendshipStatus extends AutoPropertyMapper
         'is_private'       => 'bool',
         'is_blocking_reel' => 'bool',
         'is_muting_reel'   => 'bool',
+        'is_restricted'    => 'bool',
         'blocking'         => 'bool',
         'muting'           => 'bool',
         'is_bestie'        => 'bool',

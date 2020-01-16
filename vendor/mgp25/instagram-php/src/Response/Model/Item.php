@@ -16,6 +16,8 @@ use InstagramAPI\AutoPropertyMapper;
  * @method string getAlgorithm()
  * @method AndroidLinks[] getAndroidLinks()
  * @method Attribution getAttribution()
+ * @method string getAudience()
+ * @method AudioContext getAudio()
  * @method mixed getBoostUnavailableReason()
  * @method mixed getBoostedStatus()
  * @method bool getCanReply()
@@ -53,10 +55,13 @@ use InstagramAPI\AutoPropertyMapper;
  * @method string getExploreContext()
  * @method bool getExploreHideComments()
  * @method string getExploreSourceToken()
+ * @method User[] getFacepileTopLikers()
  * @method string getFbPageUrl()
  * @method Usertag getFbUserTags()
  * @method int getFilterType()
  * @method Hashtag getFollowHashtagInfo()
+ * @method bool getFollowedBy()
+ * @method int getFollowerCount()
  * @method bool getForceOverlay()
  * @method Gating getGating()
  * @method bool getHasAudio()
@@ -64,9 +69,11 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool getHasMoreComments()
  * @method bool getHasSharedToFb()
  * @method bool getHasViewerSaved()
+ * @method Headline getHeadline()
  * @method bool getHideNuxText()
  * @method string[] getHighlightReelIds()
  * @method mixed getITunesItem()
+ * @method IabAutofillOptoutInfo getIabAutofillOptoutInfo()
  * @method mixed getIcon()
  * @method string getId()
  * @method Image_Versions2 getImageVersions2()
@@ -81,6 +88,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method int getIsDashEligible()
  * @method bool getIsEof()
  * @method bool getIsNewSuggestion()
+ * @method bool getIsPrideMedia()
  * @method bool getIsReelMedia()
  * @method mixed getIsSeen()
  * @method mixed getIsSidecarChild()
@@ -98,6 +106,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method string getMainFeedCarouselStartingMediaId()
  * @method int getMaxNumVisiblePreviewComments()
  * @method Media getMedia()
+ * @method MediaCroppingInfo getMediaCroppingInfo()
  * @method string getMediaId()
  * @method string[] getMediaIds()
  * @method mixed getMediaInfos()
@@ -117,6 +126,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method string getPk()
  * @method Placeholder getPlaceholder()
  * @method mixed getPlaybackDurationSecs()
+ * @method int getPostCount()
  * @method string getPreview()
  * @method Comment[] getPreviewComments()
  * @method ProductTags getProductTags()
@@ -129,6 +139,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method string getSocialContext()
  * @method User[] getSponsorTags()
  * @method Stories getStories()
+ * @method StoryAppAttribution getStoryAppAttribution()
  * @method StoryCountdowns[] getStoryCountdowns()
  * @method StoryCta[] getStoryCta()
  * @method mixed getStoryEvents()
@@ -143,6 +154,8 @@ use InstagramAPI\AutoPropertyMapper;
  * @method mixed getStoryProductItems()
  * @method StoryQuestionResponderInfos[] getStoryQuestionResponderInfos()
  * @method StoryQuestions[] getStoryQuestions()
+ * @method StoryQuizParticipantInfo[] getStoryQuizParticipantInfos()
+ * @method StoryQuizs[] getStoryQuizs()
  * @method mixed getStorySliders()
  * @method mixed getStorySoundOn()
  * @method SuggestedUsers getSuggestedUsers()
@@ -164,12 +177,14 @@ use InstagramAPI\AutoPropertyMapper;
  * @method string getVideoCodec()
  * @method string getVideoDashManifest()
  * @method float getVideoDuration()
+ * @method string getVideoSubtitlesUri()
  * @method VideoVersions[] getVideoVersions()
  * @method int getViewCount()
  * @method int getViewerCount()
  * @method mixed getViewerCursor()
  * @method User[] getViewers()
  * @method mixed getVisibility()
+ * @method string getXpostDenyReason()
  * @method bool isActorFbid()
  * @method bool isAdAction()
  * @method bool isAdHeaderStyle()
@@ -179,6 +194,8 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isAlgorithm()
  * @method bool isAndroidLinks()
  * @method bool isAttribution()
+ * @method bool isAudience()
+ * @method bool isAudio()
  * @method bool isBoostUnavailableReason()
  * @method bool isBoostedStatus()
  * @method bool isCanReply()
@@ -216,10 +233,13 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isExploreContext()
  * @method bool isExploreHideComments()
  * @method bool isExploreSourceToken()
+ * @method bool isFacepileTopLikers()
  * @method bool isFbPageUrl()
  * @method bool isFbUserTags()
  * @method bool isFilterType()
  * @method bool isFollowHashtagInfo()
+ * @method bool isFollowedBy()
+ * @method bool isFollowerCount()
  * @method bool isForceOverlay()
  * @method bool isGating()
  * @method bool isHasAudio()
@@ -227,9 +247,11 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isHasMoreComments()
  * @method bool isHasSharedToFb()
  * @method bool isHasViewerSaved()
+ * @method bool isHeadline()
  * @method bool isHideNuxText()
  * @method bool isHighlightReelIds()
  * @method bool isITunesItem()
+ * @method bool isIabAutofillOptoutInfo()
  * @method bool isIcon()
  * @method bool isId()
  * @method bool isImageVersions2()
@@ -244,6 +266,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isIsDashEligible()
  * @method bool isIsEof()
  * @method bool isIsNewSuggestion()
+ * @method bool isIsPrideMedia()
  * @method bool isIsReelMedia()
  * @method bool isIsSeen()
  * @method bool isIsSidecarChild()
@@ -261,6 +284,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isMainFeedCarouselStartingMediaId()
  * @method bool isMaxNumVisiblePreviewComments()
  * @method bool isMedia()
+ * @method bool isMediaCroppingInfo()
  * @method bool isMediaId()
  * @method bool isMediaIds()
  * @method bool isMediaInfos()
@@ -280,6 +304,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isPk()
  * @method bool isPlaceholder()
  * @method bool isPlaybackDurationSecs()
+ * @method bool isPostCount()
  * @method bool isPreview()
  * @method bool isPreviewComments()
  * @method bool isProductTags()
@@ -292,6 +317,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isSocialContext()
  * @method bool isSponsorTags()
  * @method bool isStories()
+ * @method bool isStoryAppAttribution()
  * @method bool isStoryCountdowns()
  * @method bool isStoryCta()
  * @method bool isStoryEvents()
@@ -306,6 +332,8 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isStoryProductItems()
  * @method bool isStoryQuestionResponderInfos()
  * @method bool isStoryQuestions()
+ * @method bool isStoryQuizParticipantInfos()
+ * @method bool isStoryQuizs()
  * @method bool isStorySliders()
  * @method bool isStorySoundOn()
  * @method bool isSuggestedUsers()
@@ -327,12 +355,14 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isVideoCodec()
  * @method bool isVideoDashManifest()
  * @method bool isVideoDuration()
+ * @method bool isVideoSubtitlesUri()
  * @method bool isVideoVersions()
  * @method bool isViewCount()
  * @method bool isViewerCount()
  * @method bool isViewerCursor()
  * @method bool isViewers()
  * @method bool isVisibility()
+ * @method bool isXpostDenyReason()
  * @method $this setActorFbid(string $value)
  * @method $this setAdAction(string $value)
  * @method $this setAdHeaderStyle(int $value)
@@ -342,6 +372,8 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setAlgorithm(string $value)
  * @method $this setAndroidLinks(AndroidLinks[] $value)
  * @method $this setAttribution(Attribution $value)
+ * @method $this setAudience(string $value)
+ * @method $this setAudio(AudioContext $value)
  * @method $this setBoostUnavailableReason(mixed $value)
  * @method $this setBoostedStatus(mixed $value)
  * @method $this setCanReply(bool $value)
@@ -379,10 +411,13 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setExploreContext(string $value)
  * @method $this setExploreHideComments(bool $value)
  * @method $this setExploreSourceToken(string $value)
+ * @method $this setFacepileTopLikers(User[] $value)
  * @method $this setFbPageUrl(string $value)
  * @method $this setFbUserTags(Usertag $value)
  * @method $this setFilterType(int $value)
  * @method $this setFollowHashtagInfo(Hashtag $value)
+ * @method $this setFollowedBy(bool $value)
+ * @method $this setFollowerCount(int $value)
  * @method $this setForceOverlay(bool $value)
  * @method $this setGating(Gating $value)
  * @method $this setHasAudio(bool $value)
@@ -390,9 +425,11 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setHasMoreComments(bool $value)
  * @method $this setHasSharedToFb(bool $value)
  * @method $this setHasViewerSaved(bool $value)
+ * @method $this setHeadline(Headline $value)
  * @method $this setHideNuxText(bool $value)
  * @method $this setHighlightReelIds(string[] $value)
  * @method $this setITunesItem(mixed $value)
+ * @method $this setIabAutofillOptoutInfo(IabAutofillOptoutInfo $value)
  * @method $this setIcon(mixed $value)
  * @method $this setId(string $value)
  * @method $this setImageVersions2(Image_Versions2 $value)
@@ -407,6 +444,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setIsDashEligible(int $value)
  * @method $this setIsEof(bool $value)
  * @method $this setIsNewSuggestion(bool $value)
+ * @method $this setIsPrideMedia(bool $value)
  * @method $this setIsReelMedia(bool $value)
  * @method $this setIsSeen(mixed $value)
  * @method $this setIsSidecarChild(mixed $value)
@@ -424,6 +462,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setMainFeedCarouselStartingMediaId(string $value)
  * @method $this setMaxNumVisiblePreviewComments(int $value)
  * @method $this setMedia(Media $value)
+ * @method $this setMediaCroppingInfo(MediaCroppingInfo $value)
  * @method $this setMediaId(string $value)
  * @method $this setMediaIds(string[] $value)
  * @method $this setMediaInfos(mixed $value)
@@ -443,6 +482,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setPk(string $value)
  * @method $this setPlaceholder(Placeholder $value)
  * @method $this setPlaybackDurationSecs(mixed $value)
+ * @method $this setPostCount(int $value)
  * @method $this setPreview(string $value)
  * @method $this setPreviewComments(Comment[] $value)
  * @method $this setProductTags(ProductTags $value)
@@ -455,6 +495,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setSocialContext(string $value)
  * @method $this setSponsorTags(User[] $value)
  * @method $this setStories(Stories $value)
+ * @method $this setStoryAppAttribution(StoryAppAttribution $value)
  * @method $this setStoryCountdowns(StoryCountdowns[] $value)
  * @method $this setStoryCta(StoryCta[] $value)
  * @method $this setStoryEvents(mixed $value)
@@ -469,6 +510,8 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setStoryProductItems(mixed $value)
  * @method $this setStoryQuestionResponderInfos(StoryQuestionResponderInfos[] $value)
  * @method $this setStoryQuestions(StoryQuestions[] $value)
+ * @method $this setStoryQuizParticipantInfos(StoryQuizParticipantInfo[] $value)
+ * @method $this setStoryQuizs(StoryQuizs[] $value)
  * @method $this setStorySliders(mixed $value)
  * @method $this setStorySoundOn(mixed $value)
  * @method $this setSuggestedUsers(SuggestedUsers $value)
@@ -490,12 +533,14 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setVideoCodec(string $value)
  * @method $this setVideoDashManifest(string $value)
  * @method $this setVideoDuration(float $value)
+ * @method $this setVideoSubtitlesUri(string $value)
  * @method $this setVideoVersions(VideoVersions[] $value)
  * @method $this setViewCount(int $value)
  * @method $this setViewerCount(int $value)
  * @method $this setViewerCursor(mixed $value)
  * @method $this setViewers(User[] $value)
  * @method $this setVisibility(mixed $value)
+ * @method $this setXpostDenyReason(string $value)
  * @method $this unsetActorFbid()
  * @method $this unsetAdAction()
  * @method $this unsetAdHeaderStyle()
@@ -505,6 +550,8 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetAlgorithm()
  * @method $this unsetAndroidLinks()
  * @method $this unsetAttribution()
+ * @method $this unsetAudience()
+ * @method $this unsetAudio()
  * @method $this unsetBoostUnavailableReason()
  * @method $this unsetBoostedStatus()
  * @method $this unsetCanReply()
@@ -542,10 +589,13 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetExploreContext()
  * @method $this unsetExploreHideComments()
  * @method $this unsetExploreSourceToken()
+ * @method $this unsetFacepileTopLikers()
  * @method $this unsetFbPageUrl()
  * @method $this unsetFbUserTags()
  * @method $this unsetFilterType()
  * @method $this unsetFollowHashtagInfo()
+ * @method $this unsetFollowedBy()
+ * @method $this unsetFollowerCount()
  * @method $this unsetForceOverlay()
  * @method $this unsetGating()
  * @method $this unsetHasAudio()
@@ -553,9 +603,11 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetHasMoreComments()
  * @method $this unsetHasSharedToFb()
  * @method $this unsetHasViewerSaved()
+ * @method $this unsetHeadline()
  * @method $this unsetHideNuxText()
  * @method $this unsetHighlightReelIds()
  * @method $this unsetITunesItem()
+ * @method $this unsetIabAutofillOptoutInfo()
  * @method $this unsetIcon()
  * @method $this unsetId()
  * @method $this unsetImageVersions2()
@@ -570,6 +622,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetIsDashEligible()
  * @method $this unsetIsEof()
  * @method $this unsetIsNewSuggestion()
+ * @method $this unsetIsPrideMedia()
  * @method $this unsetIsReelMedia()
  * @method $this unsetIsSeen()
  * @method $this unsetIsSidecarChild()
@@ -587,6 +640,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetMainFeedCarouselStartingMediaId()
  * @method $this unsetMaxNumVisiblePreviewComments()
  * @method $this unsetMedia()
+ * @method $this unsetMediaCroppingInfo()
  * @method $this unsetMediaId()
  * @method $this unsetMediaIds()
  * @method $this unsetMediaInfos()
@@ -606,6 +660,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetPk()
  * @method $this unsetPlaceholder()
  * @method $this unsetPlaybackDurationSecs()
+ * @method $this unsetPostCount()
  * @method $this unsetPreview()
  * @method $this unsetPreviewComments()
  * @method $this unsetProductTags()
@@ -618,6 +673,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetSocialContext()
  * @method $this unsetSponsorTags()
  * @method $this unsetStories()
+ * @method $this unsetStoryAppAttribution()
  * @method $this unsetStoryCountdowns()
  * @method $this unsetStoryCta()
  * @method $this unsetStoryEvents()
@@ -632,6 +688,8 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetStoryProductItems()
  * @method $this unsetStoryQuestionResponderInfos()
  * @method $this unsetStoryQuestions()
+ * @method $this unsetStoryQuizParticipantInfos()
+ * @method $this unsetStoryQuizs()
  * @method $this unsetStorySliders()
  * @method $this unsetStorySoundOn()
  * @method $this unsetSuggestedUsers()
@@ -653,18 +711,21 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetVideoCodec()
  * @method $this unsetVideoDashManifest()
  * @method $this unsetVideoDuration()
+ * @method $this unsetVideoSubtitlesUri()
  * @method $this unsetVideoVersions()
  * @method $this unsetViewCount()
  * @method $this unsetViewerCount()
  * @method $this unsetViewerCursor()
  * @method $this unsetViewers()
  * @method $this unsetVisibility()
+ * @method $this unsetXpostDenyReason()
  */
 class Item extends AutoPropertyMapper
 {
     const PHOTO = 1;
     const VIDEO = 2;
     const CAROUSEL = 8;
+    const AUDIO = 11;
 
     const JSON_PROPERTY_MAP = [
         /*
@@ -686,6 +747,7 @@ class Item extends AutoPropertyMapper
         'filter_type'                              => 'int',
         'product_type'                             => 'string',
         'nearly_complete_copyright_match'          => 'bool',
+        'media_cropping_info'                      => 'MediaCroppingInfo',
         'image_versions2'                          => 'Image_Versions2',
         'original_width'                           => 'int',
         'original_height'                          => 'int',
@@ -697,6 +759,7 @@ class Item extends AutoPropertyMapper
         'user'                                     => 'User',
         'can_see_insights_as_brand'                => 'bool',
         'caption'                                  => 'Caption',
+        'headline'                                 => 'Headline',
         'title'                                    => 'string',
         'caption_is_edited'                        => 'bool',
         'photo_of_you'                             => 'bool',
@@ -706,6 +769,7 @@ class Item extends AutoPropertyMapper
         'organic_tracking_token'                   => 'string',
         'follow_hashtag_info'                      => 'Hashtag',
         'expiring_at'                              => 'string',
+        'audience'                                 => 'string',
         'is_dash_eligible'                         => 'int',
         'video_dash_manifest'                      => 'string',
         'number_of_qualities'                      => 'int',
@@ -713,6 +777,7 @@ class Item extends AutoPropertyMapper
         'thumbnails'                               => 'Thumbnail',
         'can_reshare'                              => 'bool',
         'can_reply'                                => 'bool',
+        'is_pride_media'                           => 'bool',
         'can_viewer_reshare'                       => 'bool',
         'visibility'                               => '',
         'attribution'                              => 'Attribution',
@@ -750,6 +815,7 @@ class Item extends AutoPropertyMapper
         'carousel_media_type'                         => '',
         'carousel_media_count'                        => 'int',
         'likers'                                      => 'User[]',
+        'facepile_top_likers'                         => 'User[]',
         'like_count'                                  => 'int',
         'preview'                                     => 'string',
         'has_liked'                                   => 'bool',
@@ -783,6 +849,7 @@ class Item extends AutoPropertyMapper
         'large_urls'                                  => '',
         'media_infos'                                 => '',
         'value'                                       => 'float',
+        'followed_by'                                 => 'bool',
         'collapse_comments'                           => 'bool',
         'link'                                        => 'string',
         'link_text'                                   => 'string',
@@ -795,6 +862,7 @@ class Item extends AutoPropertyMapper
         'dr_ad_type'                                  => 'int',
         'android_links'                               => 'AndroidLinks[]',
         'ios_links'                                   => 'IOSLinks[]',
+        'iab_autofill_optout_info'                    => 'IabAutofillOptoutInfo',
         'force_overlay'                               => 'bool',
         'hide_nux_text'                               => 'bool',
         'overlay_text'                                => 'string',
@@ -831,6 +899,7 @@ class Item extends AutoPropertyMapper
         'story_feed_media'                            => '',
         'story_sound_on'                              => '',
         'creative_config'                             => '',
+        'story_app_attribution'                       => 'StoryAppAttribution',
         'story_locations'                             => 'StoryLocation[]',
         'story_sliders'                               => '',
         'story_friend_lists'                          => '',
@@ -848,8 +917,12 @@ class Item extends AutoPropertyMapper
         'is_eof'                                      => 'bool',
         'top_followers'                               => 'string[]',
         'top_followers_count'                         => 'int',
+        'follower_count'                              => 'int',
+        'post_count'                                  => 'int',
+        'video_subtitles_uri'                         => 'string',
         'story_is_saved_to_archive'                   => 'bool',
         'timezone_offset'                             => 'int',
+        'xpost_deny_reason'                           => 'string',
         'product_tags'                                => 'ProductTags',
         'inline_composer_display_condition'           => 'string',
         'inline_composer_imp_trigger_time'            => 'int',
@@ -858,7 +931,10 @@ class Item extends AutoPropertyMapper
         /*
          * HTML color string such as "#812A2A".
          */
-        'dominant_color'                   => 'string',
+        'dominant_color'                              => 'string',
+        'audio'                                       => 'AudioContext',
+        'story_quizs'                                 => 'StoryQuizs[]',
+        'story_quiz_participant_infos'                => 'StoryQuizParticipantInfo[]',
     ];
 
     /**

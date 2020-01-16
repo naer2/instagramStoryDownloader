@@ -8,6 +8,7 @@ use InstagramAPI\AutoPropertyMapper;
  * AndroidLinks.
  *
  * @method string getAndroidClass()
+ * @method mixed getAppInstallObjectiveInvalidationBehavior()
  * @method string getCallToActionTitle()
  * @method string getCanvasDocId()
  * @method string getDeeplinkUri()
@@ -16,8 +17,10 @@ use InstagramAPI\AutoPropertyMapper;
  * @method int getLinkType()
  * @method string getPackage()
  * @method string getRedirectUri()
+ * @method string getTapAndHoldContext()
  * @method string getWebUri()
  * @method bool isAndroidClass()
+ * @method bool isAppInstallObjectiveInvalidationBehavior()
  * @method bool isCallToActionTitle()
  * @method bool isCanvasDocId()
  * @method bool isDeeplinkUri()
@@ -26,8 +29,10 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isLinkType()
  * @method bool isPackage()
  * @method bool isRedirectUri()
+ * @method bool isTapAndHoldContext()
  * @method bool isWebUri()
  * @method $this setAndroidClass(string $value)
+ * @method $this setAppInstallObjectiveInvalidationBehavior(mixed $value)
  * @method $this setCallToActionTitle(string $value)
  * @method $this setCanvasDocId(string $value)
  * @method $this setDeeplinkUri(string $value)
@@ -36,8 +41,10 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setLinkType(int $value)
  * @method $this setPackage(string $value)
  * @method $this setRedirectUri(string $value)
+ * @method $this setTapAndHoldContext(string $value)
  * @method $this setWebUri(string $value)
  * @method $this unsetAndroidClass()
+ * @method $this unsetAppInstallObjectiveInvalidationBehavior()
  * @method $this unsetCallToActionTitle()
  * @method $this unsetCanvasDocId()
  * @method $this unsetDeeplinkUri()
@@ -46,20 +53,23 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetLinkType()
  * @method $this unsetPackage()
  * @method $this unsetRedirectUri()
+ * @method $this unsetTapAndHoldContext()
  * @method $this unsetWebUri()
  */
 class AndroidLinks extends AutoPropertyMapper
 {
     const JSON_PROPERTY_MAP = [
-        'linkType'          => 'int',
-        'webUri'            => 'string',
-        'androidClass'      => 'string',
-        'package'           => 'string',
-        'deeplinkUri'       => 'string',
-        'callToActionTitle' => 'string',
-        'redirectUri'       => 'string',
-        'igUserId'          => 'string',
-        'leadGenFormId'     => 'string',
-        'canvasDocId'       => 'string',
+        'linkType'                                => 'int',
+        'webUri'                                  => 'string',
+        'androidClass'                            => 'string',
+        'package'                                 => 'string',
+        'deeplinkUri'                             => 'string',
+        'callToActionTitle'                       => 'string',
+        'redirectUri'                             => 'string',
+        'igUserId'                                => 'string',
+        'appInstallObjectiveInvalidationBehavior' => '',
+        'tapAndHoldContext'                       => 'string',
+        'leadGenFormId'                           => 'string',
+        'canvasDocId'                             => 'string',
     ];
 }

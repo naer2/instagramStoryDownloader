@@ -12,7 +12,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method int getEngagementCount()
  * @method int getImpressionCount()
  * @method int getLikeCount()
- * @method string[] getReachCount()
+ * @method int getReachCount()
  * @method int getSaveCount()
  * @method bool isAvgEngagementCount()
  * @method bool isCommentCount()
@@ -26,7 +26,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setEngagementCount(int $value)
  * @method $this setImpressionCount(int $value)
  * @method $this setLikeCount(int $value)
- * @method $this setReachCount(string[] $value)
+ * @method $this setReachCount(int $value)
  * @method $this setSaveCount(int $value)
  * @method $this unsetAvgEngagementCount()
  * @method $this unsetCommentCount()
@@ -39,7 +39,7 @@ use InstagramAPI\AutoPropertyMapper;
 class MediaInsights extends AutoPropertyMapper
 {
     const JSON_PROPERTY_MAP = [
-        'reach_count'          => 'string[]',
+        'reach_count'          => 'int',
         'impression_count'     => 'int',
         'engagement_count'     => 'int',
         'avg_engagement_count' => 'int',

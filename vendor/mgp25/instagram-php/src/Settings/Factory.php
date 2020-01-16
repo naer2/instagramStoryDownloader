@@ -173,6 +173,75 @@ class Factory
 
             $storageInstance = new Storage\Memcached();
             break;
+        case 'redis':
+            // Look for allowed command-line values related to this backend.
+            $cmdOptions = self::getCmdOptions([
+                'settings_redishost::',
+                'settings_redisport::',
+                'settings_redisauth::',
+                'settings_redishash::',
+            ]);
+
+            // These settings are optional, and can be provided regardless of
+            // connection method:
+            $locationConfig['redishash'] = self::getUserConfig('redishash', $storageConfig, $cmdOptions);
+
+            if (isset($storageConfig['redis'])) {
+                // If "redis" is set in the factory config, assume the user wants
+                // to re-use an existing Redis connection. In that case we ignore
+                // the host/port/auth parameters and use their Redis.
+                $locationConfig['redis'] = $storageConfig['redis'];
+            } else {
+                // Make a new connection. Optional settings for it:
+                $locationConfig['redishost'] = self::getUserConfig('redishost', $storageConfig, $cmdOptions);
+                $locationConfig['redisport'] = self::getUserConfig('redisport', $storageConfig, $cmdOptions);
+                $locationConfig['redisauth'] = self::getUserConfig('redisauth', $storageConfig, $cmdOptions);
+            }
+
+            $storageInstance = new Storage\Redis();
+            break;
+
+        case 'postgresql':
+            // Look for allowed command-line values related to this backend.
+            $cmdOptions = self::getCmdOptions([
+                'settings_dbusername::',
+                'settings_dbpassword::',
+                'settings_dbhost::',
+                'settings_dbname::',
+                'settings_dbport::',
+                'settings_dbtablename::',
+            ]);
+
+            // These settings are optional, and can be provided regardless of
+            // connection method:
+            $locationConfig = [
+                'dbtablename' => self::getUserConfig('dbtablename', $storageConfig, $cmdOptions),
+            ];
+
+            // These settings are required, but you only have to use one method:
+            if (isset($storageConfig['pdo'])) {
+                // If "pdo" is set in the factory config, assume the user wants
+                // to re-use an existing PDO connection. In that case we ignore
+                // the username/password/host/name parameters and use their PDO.
+                // NOTE: Beware that we WILL change attributes on the PDO
+                // connection to suit our needs! Primarily turning all error
+                // reporting into exceptions, and setting the charset to UTF-8.
+                // If you want to re-use a PDO connection, you MUST accept the
+                // fact that WE NEED exceptions and UTF-8 in our PDO! If that is
+                // not acceptable to you then DO NOT re-use your own PDO object!
+                $locationConfig['pdo'] = $storageConfig['pdo'];
+            } else {
+                // Make a new connection. Optional settings for it:
+                $locationConfig['dbusername'] = self::getUserConfig('dbusername', $storageConfig, $cmdOptions);
+                $locationConfig['dbpassword'] = self::getUserConfig('dbpassword', $storageConfig, $cmdOptions);
+                $locationConfig['dbhost'] = self::getUserConfig('dbhost', $storageConfig, $cmdOptions);
+                $locationConfig['dbname'] = self::getUserConfig('dbname', $storageConfig, $cmdOptions);
+                $locationConfig['dbport'] = self::getUserConfig('dbport', $storageConfig, $cmdOptions);
+            }
+
+            $storageInstance = new Storage\PostgreSQL();
+
+            break;
         case 'custom':
             // Custom storage classes can only be configured via the main array.
             // When using a custom class, you must provide a StorageInterface:

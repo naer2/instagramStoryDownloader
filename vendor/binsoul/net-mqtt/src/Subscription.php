@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt;
 
 /**
@@ -12,14 +14,14 @@ interface Subscription
      *
      * @return string
      */
-    public function getFilter();
+    public function getFilter(): string;
 
     /**
      * Returns the quality of service level.
      *
      * @return int
      */
-    public function getQosLevel();
+    public function getQosLevel(): int;
 
     /**
      * Returns a new subscription with the given topic filter.
@@ -28,7 +30,7 @@ interface Subscription
      *
      * @return self
      */
-    public function withFilter($filter);
+    public function withFilter(string $filter): Subscription;
 
     /**
      * Returns a new subscription with the given quality of service level.
@@ -37,5 +39,5 @@ interface Subscription
      *
      * @return self
      */
-    public function withQosLevel($level);
+    public function withQosLevel(int $level): Subscription;
 }

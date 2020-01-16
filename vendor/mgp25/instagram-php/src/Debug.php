@@ -4,16 +4,28 @@ namespace InstagramAPI;
 
 class Debug
 {
+    /*
+     * If set to true, the debug logs will, in addition to being printed to console, be placed in the file noted below in $debugLogFile
+     */
+    public static $debugLog = false;
+    /*
+     * The file to place debug logs into when $debugLog is true
+     */
+    public static $debugLogFile = 'debug.log';
+
     public static function printRequest(
         $method,
         $endpoint)
     {
         if (PHP_SAPI === 'cli') {
-            $method = Utils::colouredString("{$method}:  ", 'light_blue');
+            $cMethod = Utils::colouredString("{$method}:  ", 'light_blue');
         } else {
-            $method = $method.':  ';
+            $cMethod = $method.':  ';
         }
-        echo $method.$endpoint."\n";
+        echo $cMethod.$endpoint."\n";
+        if (self::$debugLog) {
+            file_put_contents(self::$debugLogFile, $method.':  '.$endpoint."\n", FILE_APPEND | LOCK_EX);
+        }
     }
 
     public static function printUpload(
@@ -25,6 +37,9 @@ class Debug
             $dat = '→ '.$uploadBytes;
         }
         echo $dat."\n";
+        if (self::$debugLog) {
+            file_put_contents(self::$debugLogFile, "→  $uploadBytes\n", FILE_APPEND | LOCK_EX);
+        }
     }
 
     public static function printHttpCode(
@@ -35,6 +50,9 @@ class Debug
             echo Utils::colouredString("← {$httpCode} \t {$bytes}", 'green')."\n";
         } else {
             echo "← {$httpCode} \t {$bytes}\n";
+        }
+        if (self::$debugLog) {
+            file_put_contents(self::$debugLogFile, "← {$httpCode} \t {$bytes}\n", FILE_APPEND | LOCK_EX);
         }
     }
 
@@ -47,20 +65,27 @@ class Debug
         } else {
             $res = 'RESPONSE: ';
         }
-        if ($truncated && strlen($response) > 1000) {
-            $response = substr($response, 0, 1000).'...';
+        if ($truncated && mb_strlen($response, 'utf8') > 1000) {
+            $response = mb_substr($response, 0, 1000, 'utf8').'...';
         }
         echo $res.$response."\n\n";
+        if (self::$debugLog) {
+            file_put_contents(self::$debugLogFile, "RESPONSE: {$response}\n\n", FILE_APPEND | LOCK_EX);
+        }
     }
 
     public static function printPostData(
         $post)
     {
+        $gzip = mb_strpos($post, "\x1f"."\x8b"."\x08", 0, 'US-ASCII') === 0;
         if (PHP_SAPI === 'cli') {
-            $dat = Utils::colouredString('DATA: ', 'yellow');
+            $dat = Utils::colouredString(($gzip ? 'DECODED ' : '').'DATA: ', 'yellow');
         } else {
             $dat = 'DATA: ';
         }
-        echo $dat.urldecode($post)."\n";
+        echo $dat.urldecode(($gzip ? zlib_decode($post) : $post))."\n";
+        if (self::$debugLog) {
+            file_put_contents(self::$debugLogFile, 'DATA: '.urldecode(($gzip ? zlib_decode($post) : $post))."\n", FILE_APPEND | LOCK_EX);
+        }
     }
 }

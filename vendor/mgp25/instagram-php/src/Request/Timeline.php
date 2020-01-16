@@ -199,6 +199,11 @@ class Timeline extends RequestCollection
      *                             memory manager/force closed by user/just
      *                             installed for the first time;
      *                             "feed_view_info" DON'T USE IT YET.
+     *                             "is_charging" Wether the device is being charged
+     *                             or not. Valid values: 0 for not charging, 1 for
+     *                             charging.
+     *                             "battery_level" Sets the current device battery
+     *                             level.
      *
      * @throws \InstagramAPI\Exception\InstagramException
      *
@@ -221,33 +226,45 @@ class Timeline extends RequestCollection
             ->addHeader('X-Ads-Opt-Out', '0')
             ->addHeader('X-Google-AD-ID', $this->ig->advertising_id)
             ->addHeader('X-DEVICE-ID', $this->ig->uuid)
+            ->addPost('bloks_versioning_id', Constants::BLOCK_VERSIONING_ID)
             ->addPost('_csrftoken', $this->ig->client->getToken())
             ->addPost('_uuid', $this->ig->uuid)
             ->addPost('is_prefetch', '0')
             ->addPost('phone_id', $this->ig->phone_id)
             ->addPost('device_id', $this->ig->uuid)
             ->addPost('client_session_id', $this->ig->session_id)
-            ->addPost('battery_level', mt_rand(25, 100))
-            ->addPost('is_charging', '0')
+            ->addPost('battery_level', '100')
+            ->addPost('is_charging', '1')
             ->addPost('will_sound_on', '1')
-            ->addPost('is_on_screen', 'true')
             ->addPost('timezone_offset', date('Z'))
             ->addPost('is_async_ads_in_headload_enabled', (string) (int) ($asyncAds && $this->ig->isExperimentEnabled(
                     'ig_android_ad_async_ads_universe',
                     'is_async_ads_in_headload_enabled'
                 )))
             ->addPost('is_async_ads_double_request', (string) (int) ($asyncAds && $this->ig->isExperimentEnabled(
-                'ig_android_ad_async_ads_universe',
-                'is_double_request_enabled'
-            )))
+                    'ig_android_ad_async_ads_universe',
+                    'is_double_request_enabled'
+                )))
             ->addPost('is_async_ads_rti', (string) (int) ($asyncAds && $this->ig->isExperimentEnabled(
-                'ig_android_ad_async_ads_universe',
-                'is_rti_enabled'
-            )))
+                    'ig_android_ad_async_ads_universe',
+                    'is_rti_enabled'
+                )))
             ->addPost('rti_delivery_backend', (string) (int) $this->ig->getExperimentParam(
                 'ig_android_ad_async_ads_universe',
                 'rti_delivery_backend'
             ));
+
+        if (isset($options['is_charging'])) {
+            $request->addPost('is_charging', $options['is_charging']);
+        } else {
+            $request->addPost('is_charging', '0');
+        }
+
+        if (isset($options['battery_level'])) {
+            $request->addPost('battery_level', $options['battery_level']);
+        } else {
+            $request->addPost('battery_level', mt_rand(25, 100));
+        }
 
         if (isset($options['latest_story_pk'])) {
             $request->addPost('latest_story_pk', $options['latest_story_pk']);
@@ -295,7 +312,7 @@ class Timeline extends RequestCollection
                 $request->addPost('feed_view_info', json_encode([$options['feed_view_info']]));
             }
         } elseif ($maxId === null) {
-            $request->addPost('feed_view_info', '');
+            $request->addPost('feed_view_info', '[]');
         }
 
         if (!empty($options['push_disabled'])) {

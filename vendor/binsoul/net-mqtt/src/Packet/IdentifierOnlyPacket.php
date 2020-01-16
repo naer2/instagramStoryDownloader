@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt\Packet;
 
 use BinSoul\Net\Mqtt\PacketStream;
@@ -35,7 +37,7 @@ abstract class IdentifierOnlyPacket extends BasePacket
      *
      * @return int
      */
-    protected function getExpectedPacketFlags()
+    protected function getExpectedPacketFlags(): int
     {
         return 0;
     }

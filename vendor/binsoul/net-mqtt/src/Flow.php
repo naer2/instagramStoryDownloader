@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt;
 
 /**
@@ -12,7 +14,7 @@ interface Flow
      *
      * @return string
      */
-    public function getCode();
+    public function getCode(): string;
 
     /**
      * Starts the flow.
@@ -30,7 +32,7 @@ interface Flow
      *
      * @return bool
      */
-    public function accept(Packet $packet);
+    public function accept(Packet $packet): bool;
 
     /**
      * Continues the flow.
@@ -46,14 +48,14 @@ interface Flow
      *
      * @return bool
      */
-    public function isFinished();
+    public function isFinished(): bool;
 
     /**
      * Indicates if the flow finished successfully.
      *
      * @return bool
      */
-    public function isSuccess();
+    public function isSuccess(): bool;
 
     /**
      * Returns the result of the flow if it finished successfully.
@@ -67,5 +69,5 @@ interface Flow
      *
      * @return string
      */
-    public function getErrorMessage();
+    public function getErrorMessage(): string;
 }

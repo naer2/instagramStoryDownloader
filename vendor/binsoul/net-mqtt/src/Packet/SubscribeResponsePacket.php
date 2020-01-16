@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt\Packet;
 
 use BinSoul\Net\Mqtt\Exception\MalformedPacketException;
-use BinSoul\Net\Mqtt\PacketStream;
 use BinSoul\Net\Mqtt\Packet;
+use BinSoul\Net\Mqtt\PacketStream;
 
 /**
  * Represents the SUBACK packet.
@@ -13,6 +15,9 @@ class SubscribeResponsePacket extends BasePacket
 {
     use IdentifiablePacket;
 
+    /**
+     * @var string[][]
+     */
     private static $qosLevels = [
         0 => ['Maximum QoS 0'],
         1 => ['Maximum QoS 1'],
@@ -64,7 +69,7 @@ class SubscribeResponsePacket extends BasePacket
      *
      * @return bool
      */
-    public function isError($returnCode)
+    public function isError($returnCode): bool
     {
         return $returnCode === 128;
     }
@@ -74,9 +79,9 @@ class SubscribeResponsePacket extends BasePacket
      *
      * @param int $returnCode
      *
-     * @return bool
+     * @return string
      */
-    public function getReturnCodeName($returnCode)
+    public function getReturnCodeName($returnCode): string
     {
         if (isset(self::$qosLevels[$returnCode])) {
             return self::$qosLevels[$returnCode][0];
@@ -90,7 +95,7 @@ class SubscribeResponsePacket extends BasePacket
      *
      * @return int[]
      */
-    public function getReturnCodes()
+    public function getReturnCodes(): array
     {
         return $this->returnCodes;
     }
@@ -99,6 +104,8 @@ class SubscribeResponsePacket extends BasePacket
      * Sets the return codes.
      *
      * @param int[] $value
+     *
+     * @return void
      *
      * @throws \InvalidArgumentException
      */
@@ -117,12 +124,14 @@ class SubscribeResponsePacket extends BasePacket
      * @param int  $returnCode
      * @param bool $fromPacket
      *
+     * @return void
+     *
      * @throws MalformedPacketException
      * @throws \InvalidArgumentException
      */
     private function assertValidReturnCode($returnCode, $fromPacket = true)
     {
-        if (!in_array($returnCode, [0, 1, 2, 128])) {
+        if (!in_array($returnCode, [0, 1, 2, 128], true)) {
             $this->throwException(
                 sprintf('Malformed return code %02x.', $returnCode),
                 $fromPacket

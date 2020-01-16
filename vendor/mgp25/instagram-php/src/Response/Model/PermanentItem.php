@@ -13,6 +13,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method mixed getLike()
  * @method Link getLink()
  * @method LiveVideoShare getLiveVideoShare()
+ * @method LiveViewerInvite getLiveViewerInvite()
  * @method Location getLocation()
  * @method MediaData getMedia()
  * @method Item getMediaShare()
@@ -27,6 +28,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isLike()
  * @method bool isLink()
  * @method bool isLiveVideoShare()
+ * @method bool isLiveViewerInvite()
  * @method bool isLocation()
  * @method bool isMedia()
  * @method bool isMediaShare()
@@ -41,6 +43,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setLike(mixed $value)
  * @method $this setLink(Link $value)
  * @method $this setLiveVideoShare(LiveVideoShare $value)
+ * @method $this setLiveViewerInvite(LiveViewerInvite $value)
  * @method $this setLocation(Location $value)
  * @method $this setMedia(MediaData $value)
  * @method $this setMediaShare(Item $value)
@@ -55,6 +58,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetLike()
  * @method $this unsetLink()
  * @method $this unsetLiveVideoShare()
+ * @method $this unsetLiveViewerInvite()
  * @method $this unsetLocation()
  * @method $this unsetMedia()
  * @method $this unsetMediaShare()
@@ -67,19 +71,20 @@ use InstagramAPI\AutoPropertyMapper;
 class PermanentItem extends AutoPropertyMapper
 {
     const JSON_PROPERTY_MAP = [
-        'item_id'          => 'string',
-        'user_id'          => 'string',
-        'timestamp'        => 'string',
-        'item_type'        => 'string',
-        'profile'          => 'User',
-        'text'             => 'string',
-        'location'         => 'Location',
-        'like'             => '',
-        'media'            => 'MediaData',
-        'link'             => 'Link',
-        'media_share'      => 'Item',
-        'reel_share'       => 'ReelShare',
-        'client_context'   => 'string',
-        'live_video_share' => 'LiveVideoShare',
+        'item_id'            => 'string',
+        'user_id'            => 'string',
+        'timestamp'          => 'string',
+        'item_type'          => 'string',
+        'profile'            => 'User',
+        'text'               => 'string',
+        'location'           => 'Location',
+        'like'               => '',
+        'media'              => 'MediaData',
+        'link'               => 'Link',
+        'media_share'        => 'Item',
+        'reel_share'         => 'ReelShare',
+        'client_context'     => 'string',
+        'live_video_share'   => 'LiveVideoShare',
+        'live_viewer_invite' => 'LiveViewerInvite',
     ];
 }

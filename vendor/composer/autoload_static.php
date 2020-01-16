@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInita3a0a5e96604218506f399edf26d5d17
+class ComposerStaticInitdc629811057246f644cabd02e4f345dd
 {
     public static $files = array (
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
@@ -14,8 +14,6 @@ class ComposerStaticInita3a0a5e96604218506f399edf26d5d17
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'ebf8799635f67b5d7248946fe2154f4a' => __DIR__ . '/..' . '/ringcentral/psr7/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
-        '547f39254e5312c66b30c9b6a7d3570f' => __DIR__ . '/..' . '/eleirbag89/telegrambotphp/Telegram.php',
-        '221a7c0887f892e44dd08191321d3815' => __DIR__ . '/..' . '/eleirbag89/telegrambotphp/TelegramErrorLogger.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -182,9 +180,9 @@ class ComposerStaticInita3a0a5e96604218506f399edf26d5d17
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInita3a0a5e96604218506f399edf26d5d17::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInita3a0a5e96604218506f399edf26d5d17::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInita3a0a5e96604218506f399edf26d5d17::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitdc629811057246f644cabd02e4f345dd::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitdc629811057246f644cabd02e4f345dd::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitdc629811057246f644cabd02e4f345dd::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

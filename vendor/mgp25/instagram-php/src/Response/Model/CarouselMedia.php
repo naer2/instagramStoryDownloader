@@ -32,9 +32,11 @@ use InstagramAPI\AutoPropertyMapper;
  * @method string getOverlaySubtitle()
  * @method string getOverlayText()
  * @method string getOverlayTitle()
+ * @method bool getPhotoOfYou()
  * @method string getPk()
  * @method string getPreview()
  * @method Usertag getUsertags()
+ * @method string getVideoCodec()
  * @method string getVideoDashManifest()
  * @method float getVideoDuration()
  * @method string getVideoSubtitlesUri()
@@ -64,9 +66,11 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isOverlaySubtitle()
  * @method bool isOverlayText()
  * @method bool isOverlayTitle()
+ * @method bool isPhotoOfYou()
  * @method bool isPk()
  * @method bool isPreview()
  * @method bool isUsertags()
+ * @method bool isVideoCodec()
  * @method bool isVideoDashManifest()
  * @method bool isVideoDuration()
  * @method bool isVideoSubtitlesUri()
@@ -96,9 +100,11 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setOverlaySubtitle(string $value)
  * @method $this setOverlayText(string $value)
  * @method $this setOverlayTitle(string $value)
+ * @method $this setPhotoOfYou(bool $value)
  * @method $this setPk(string $value)
  * @method $this setPreview(string $value)
  * @method $this setUsertags(Usertag $value)
+ * @method $this setVideoCodec(string $value)
  * @method $this setVideoDashManifest(string $value)
  * @method $this setVideoDuration(float $value)
  * @method $this setVideoSubtitlesUri(string $value)
@@ -128,9 +134,11 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetOverlaySubtitle()
  * @method $this unsetOverlayText()
  * @method $this unsetOverlayTitle()
+ * @method $this unsetPhotoOfYou()
  * @method $this unsetPk()
  * @method $this unsetPreview()
  * @method $this unsetUsertags()
+ * @method $this unsetVideoCodec()
  * @method $this unsetVideoDashManifest()
  * @method $this unsetVideoDuration()
  * @method $this unsetVideoSubtitlesUri()
@@ -147,6 +155,7 @@ class CarouselMedia extends AutoPropertyMapper
         'carousel_parent_id'  => 'string',
         'fb_user_tags'        => 'Usertag',
         'number_of_qualities' => 'int',
+        'video_codec'         => 'string',
         'is_dash_eligible'    => 'int',
         'video_dash_manifest' => 'string',
         'image_versions2'     => 'Image_Versions2',
@@ -178,6 +187,7 @@ class CarouselMedia extends AutoPropertyMapper
         'overlay_text'        => 'string',
         'overlay_title'       => 'string',
         'overlay_subtitle'    => 'string',
+        'photo_of_you'        => 'bool',
         /*
          * HTML color string such as "#812A2A".
          */

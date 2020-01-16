@@ -44,6 +44,8 @@ class StorageHandler
         'zr_token', // Zero rating token.
         'zr_expires', // Zero rating token expiration timestamp.
         'zr_rules', // Zero rating rewrite rules.
+        'public_key', // Public Key for login authentication.
+        'public_key_id', // Public Key ID for login authentication.
     ];
 
     /**
@@ -86,7 +88,8 @@ class StorageHandler
         'ig_android_fbupload_sidecar_video_universe',
         'ig_android_skip_get_fbupload_photo_universe',
         'ig_android_skip_get_fbupload_universe',
-        'ig_android_loom_universe',
+        'ig_android_live_suggested_live_expansion',
+        'ig_android_live_qa_broadcaster_v1_universe',
     ];
 
     /**

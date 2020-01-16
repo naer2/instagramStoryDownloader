@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt\Packet;
 
 /**
@@ -17,7 +19,7 @@ trait IdentifiablePacket
      *
      * @return int
      */
-    protected function generateIdentifier()
+    protected function generateIdentifier(): int
     {
         if ($this->identifier === null) {
             ++self::$nextIdentifier;
@@ -44,7 +46,7 @@ trait IdentifiablePacket
      *
      * @param int|null $value
      *
-     * @throws \InvalidArgumentException
+     * @return void
      */
     public function setIdentifier($value)
     {

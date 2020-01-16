@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt;
 
 /**
@@ -14,7 +16,7 @@ class DefaultMessage implements Message
     /** @var bool */
     private $isRetained;
     /** @var bool */
-    private $isDuplicate = false;
+    private $isDuplicate;
     /** @var int */
     private $qosLevel;
 
@@ -36,32 +38,32 @@ class DefaultMessage implements Message
         $this->isDuplicate = $isDuplicate;
     }
 
-    public function getTopic()
+    public function getTopic(): string
     {
         return $this->topic;
     }
 
-    public function getPayload()
+    public function getPayload(): string
     {
         return $this->payload;
     }
 
-    public function getQosLevel()
+    public function getQosLevel(): int
     {
         return $this->qosLevel;
     }
 
-    public function isDuplicate()
+    public function isDuplicate(): bool
     {
         return $this->isDuplicate;
     }
 
-    public function isRetained()
+    public function isRetained(): bool
     {
         return $this->isRetained;
     }
 
-    public function withTopic($topic)
+    public function withTopic(string $topic): Message
     {
         $result = clone $this;
         $result->topic = $topic;
@@ -69,7 +71,7 @@ class DefaultMessage implements Message
         return $result;
     }
 
-    public function withPayload($payload)
+    public function withPayload(string $payload): Message
     {
         $result = clone $this;
         $result->payload = $payload;
@@ -77,7 +79,7 @@ class DefaultMessage implements Message
         return $result;
     }
 
-    public function withQosLevel($level)
+    public function withQosLevel(int $level): Message
     {
         $result = clone $this;
         $result->qosLevel = $level;
@@ -85,7 +87,7 @@ class DefaultMessage implements Message
         return $result;
     }
 
-    public function retain()
+    public function retain(): Message
     {
         $result = clone $this;
         $result->isRetained = true;
@@ -93,7 +95,7 @@ class DefaultMessage implements Message
         return $result;
     }
 
-    public function release()
+    public function release(): Message
     {
         $result = clone $this;
         $result->isRetained = false;
@@ -101,7 +103,7 @@ class DefaultMessage implements Message
         return $result;
     }
 
-    public function duplicate()
+    public function duplicate(): Message
     {
         $result = clone $this;
         $result->isDuplicate = true;
@@ -109,7 +111,7 @@ class DefaultMessage implements Message
         return $result;
     }
 
-    public function original()
+    public function original(): Message
     {
         $result = clone $this;
         $result->isDuplicate = false;

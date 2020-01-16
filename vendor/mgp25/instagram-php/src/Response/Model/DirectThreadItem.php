@@ -36,6 +36,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method mixed getTimestamp()
  * @method string getUserId()
  * @method VideoCallEvent getVideoCallEvent()
+ * @method VoiceMedia getVoiceMedia()
  * @method bool isActionLog()
  * @method bool isAnimatedMedia()
  * @method bool isClientContext()
@@ -65,6 +66,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method bool isTimestamp()
  * @method bool isUserId()
  * @method bool isVideoCallEvent()
+ * @method bool isVoiceMedia()
  * @method $this setActionLog(ActionLog $value)
  * @method $this setAnimatedMedia(AnimatedMedia $value)
  * @method $this setClientContext(string $value)
@@ -94,6 +96,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this setTimestamp(mixed $value)
  * @method $this setUserId(string $value)
  * @method $this setVideoCallEvent(VideoCallEvent $value)
+ * @method $this setVoiceMedia(VoiceMedia $value)
  * @method $this unsetActionLog()
  * @method $this unsetAnimatedMedia()
  * @method $this unsetClientContext()
@@ -123,6 +126,7 @@ use InstagramAPI\AutoPropertyMapper;
  * @method $this unsetTimestamp()
  * @method $this unsetUserId()
  * @method $this unsetVideoCallEvent()
+ * @method $this unsetVoiceMedia()
  */
 class DirectThreadItem extends AutoPropertyMapper
 {
@@ -144,6 +148,7 @@ class DirectThreadItem extends AutoPropertyMapper
     const LIVE_VIEWER_INVITE = 'live_viewer_invite';
     const PRODUCT_SHARE = 'product_share';
     const VIDEO_CALL_EVENT = 'video_call_event';
+    const VOICE_MEDIA = 'voice_media';
 
     const JSON_PROPERTY_MAP = [
         'item_id'                       => 'string',
@@ -175,5 +180,6 @@ class DirectThreadItem extends AutoPropertyMapper
         'product_share'                 => 'ProductShare',
         'animated_media'                => 'AnimatedMedia',
         'felix_share'                   => 'FelixShare',
+        'voice_media'                   => 'VoiceMedia',
     ];
 }

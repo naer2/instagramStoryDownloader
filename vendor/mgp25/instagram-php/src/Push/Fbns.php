@@ -24,7 +24,8 @@ use React\Socket\ConnectorInterface;
  */
 class Fbns implements PersistentInterface, EventEmitterInterface
 {
-    use PersistentTrait, EventEmitterTrait;
+    use PersistentTrait;
+    use EventEmitterTrait;
 
     const CONNECTION_TIMEOUT = 5;
 

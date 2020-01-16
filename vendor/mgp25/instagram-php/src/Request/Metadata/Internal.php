@@ -2,6 +2,7 @@
 
 namespace InstagramAPI\Request\Metadata;
 
+use InstagramAPI\Constants;
 use InstagramAPI\Media\Constraints\ConstraintsFactory;
 use InstagramAPI\Media\Photo\PhotoDetails;
 use InstagramAPI\Media\Video\VideoDetails;
@@ -11,7 +12,7 @@ use InstagramAPI\Response\UploadPhotoResponse;
 use InstagramAPI\Response\UploadVideoResponse;
 use InstagramAPI\Utils;
 
-final class Internal
+class Internal
 {
     /** @var PhotoDetails */
     private $_photoDetails;
@@ -40,6 +41,9 @@ final class Internal
     /** @var bool */
     private $_bestieMedia;
 
+    /** @var string */
+    private $_storyViewMode;
+
     /**
      * Constructor.
      *
@@ -54,6 +58,39 @@ final class Internal
             $this->_uploadId = Utils::generateUploadId();
         }
         $this->_bestieMedia = false;
+    }
+
+    /**
+     * Set story view mode.
+     *
+     * @param string $viewMode View mode. Use STORY_VIEW_MODE_ONCE and STORY_VIEW_MODE_REPLAYABLE constants as values.
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return string
+     */
+    public function setStoryViewMode(
+        $viewMode)
+    {
+        if ($viewMode != Constants::STORY_VIEW_MODE_ONCE
+            && $viewMode != Constants::STORY_VIEW_MODE_REPLAYABLE
+        ) {
+            throw new \InvalidArgumentException('Unknown view mode: '.$viewMode);
+        }
+
+        $this->_storyViewMode = $viewMode;
+
+        return $this->_storyViewMode;
+    }
+
+    /**
+     * Get story view mode.
+     *
+     * @return string
+     */
+    public function getStoryViewMode()
+    {
+        return $this->_storyViewMode;
     }
 
     /**

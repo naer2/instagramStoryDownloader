@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Net\Mqtt\Packet;
 
-use BinSoul\Net\Mqtt\PacketStream;
 use BinSoul\Net\Mqtt\Packet;
+use BinSoul\Net\Mqtt\PacketStream;
 
 /**
  * Represents the SUBSCRIBE packet.
@@ -53,7 +55,7 @@ class SubscribeRequestPacket extends BasePacket
      *
      * @return string
      */
-    public function getTopic()
+    public function getTopic(): string
     {
         return $this->topic;
     }
@@ -62,6 +64,8 @@ class SubscribeRequestPacket extends BasePacket
      * Sets the topic.
      *
      * @param string $value
+     *
+     * @return void
      *
      * @throws \InvalidArgumentException
      */
@@ -80,7 +84,7 @@ class SubscribeRequestPacket extends BasePacket
      *
      * @return int
      */
-    public function getQosLevel()
+    public function getQosLevel(): int
     {
         return $this->qosLevel;
     }
@@ -89,6 +93,8 @@ class SubscribeRequestPacket extends BasePacket
      * Sets the quality of service level.
      *
      * @param int $value
+     *
+     * @return void
      *
      * @throws \InvalidArgumentException
      */

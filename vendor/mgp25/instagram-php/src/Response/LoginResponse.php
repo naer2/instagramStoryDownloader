@@ -21,7 +21,7 @@ use InstagramAPI\Response;
  * @method mixed getInvalidCredentials()
  * @method bool getIsPrivate()
  * @method bool getIsVerified()
- * @method mixed getLock()
+ * @method bool getLock()
  * @method Model\User getLoggedInUser()
  * @method mixed getMessage()
  * @method int getNationalNumber()
@@ -79,7 +79,7 @@ use InstagramAPI\Response;
  * @method $this setInvalidCredentials(mixed $value)
  * @method $this setIsPrivate(bool $value)
  * @method $this setIsVerified(bool $value)
- * @method $this setLock(mixed $value)
+ * @method $this setLock(bool $value)
  * @method $this setLoggedInUser(Model\User $value)
  * @method $this setMessage(mixed $value)
  * @method $this setNationalNumber(int $value)
@@ -150,7 +150,7 @@ class LoginResponse extends Response
         'phone_verification_settings'   => 'Model\PhoneVerificationSettings',
         'two_factor_info'               => 'Model\TwoFactorInfo',
         'checkpoint_url'                => 'string',
-        'lock'                          => '',
+        'lock'                          => 'bool',
         'help_url'                      => 'string',
         'challenge'                     => 'Model\Challenge',
     ];

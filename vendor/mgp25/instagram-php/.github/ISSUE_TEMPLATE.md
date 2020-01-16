@@ -1,3 +1,5 @@
+# Legacy Issue Template
+
 ## Prerequisites
 - You will be asked some questions and requested to provide some information, please read them **carefully** and answer completely.
 - Put an `x` into all the boxes [ ] relevant to your issue (like so [x]).
