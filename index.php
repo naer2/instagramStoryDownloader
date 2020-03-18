@@ -77,8 +77,8 @@ try {
 	file_put_contents("fatals.txt",$fatalError,FILE_APPEND);
 	file_put_contents("fatals.txt",$exception,FILE_APPEND);
 	file_put_contents("fatals.txt",$response,FILE_APPEND);
-	file_put_contents("fatals.txt",$var_dump($exception),FILE_APPEND);
-	file_put_contents("fatals.txt",$print_r($exception),FILE_APPEND);
+	file_put_contents("fatals.txt",var_dump($exception),FILE_APPEND);
+	file_put_contents("fatals.txt",print_r($exception),FILE_APPEND);
 	if ($response->getErrorType() === 'checkpoint_challenge_required') {
 		sleep(3);
 		$checkApiPath = substr( $response->getChallenge()->getApiPath(), 1);
@@ -97,7 +97,9 @@ try {
 		$customResponse = $ig->request($checkApiPath)->setNeedsAuth(false)->addPost('security_code', $code)->addPost('_uuid', $ig->uuid)->addPost('guid', $ig->uuid)->addPost('device_id', $ig->device_id)->addPost('_uid', $ig->account_id)->addPost('_csrftoken', $ig->client->getToken())->getDecodedResponse();
 		if ($customResponse['status'] === 'ok' && (int) $customResponse['logged_in_user']['pk'] === (int) $user_id ) {
 		} else {
-			var_dump( $customResponse );
+			
+			file_put_contents("customResponse.txt",var_dump($customResponse),FILE_APPEND);
+			file_put_contents("customResponse.txt",print_r($customResponse),FILE_APPEND);
 		}
 	}
 	catch ( Exception $ex ) {
