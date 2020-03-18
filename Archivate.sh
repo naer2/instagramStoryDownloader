@@ -3,7 +3,7 @@
 #writing dates into file
 find ./downloaded -daystart -maxdepth 1 -type f ! -mtime -2 -exec stat -c "%y" {} \; | awk '{ print $1; }' | sort -u > test.txt
 
-#reading from this fire
+#reading from this file
 while read -r line; do
     # Do what you want to $name
 	start_date="$line 00:00:00";
