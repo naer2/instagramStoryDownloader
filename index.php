@@ -86,7 +86,8 @@ try {
 		->addPost('guid', $ig->uuid)->addPost('device_id', $ig->device_id)->addPost('_uid', $ig->account_id)->addPost('_csrftoken', $ig->client->getToken())->getDecodedResponse();
 	}
 	else {
-		exit;
+		echo 'Unresolved error no checkpoint_challenge_required'.PHP_EOL;
+		exit();
 	}
 	try {
 		if ($customResponse['status'] === 'ok' && $customResponse['action'] === 'close') {
