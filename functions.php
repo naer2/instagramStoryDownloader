@@ -30,14 +30,11 @@ function time_elapsed_string($datetime, $full = false) {
 
 function getVideoHTML($url){
 
-echo "</br><video width='480' height='850' controls>
-    <source src='".$url."' type='video/mp4'>
-  Your browser does not support the video tag.
-  </video></br></br>";
+echo "Video: ".$url.PHP_EOL;
 }
 
 function getImgHTML($url){
 
-echo "</br><img src='".$url."' width='480' height='850'></br></br>";
+echo "Image: ".$url.PHP_EOL;
 }
 ?>
