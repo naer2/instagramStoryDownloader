@@ -11,7 +11,7 @@ while read -r line; do
 	archive_title=`date --date $line +"%d-%m-%Y"`;
 	find ./downloaded -type f \( -iname '*.jpg' -o -iname '*.mp4' \) -newermt "$start_date" -not -newermt "$end_date" -printf "%f\0" | tar -czf ./downloaded/$archive_title.tgz -C ./downloaded --null -T -;
 	if tar -tzf ./downloaded/$archive_title.tgz >/dev/null;then
-		find ./downloaded -type f -newermt "$start_date" -not -newermt "$end_date" -exec rm {} +;
+		find ./downloaded -type f \( -iname '*.jpg' -o -iname '*.mp4' \) -newermt "$start_date" -not -newermt "$end_date" -exec rm {} +;
 	fi;
 	
 	echo "end of checking $archive_title";
