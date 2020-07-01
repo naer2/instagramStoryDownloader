@@ -140,6 +140,9 @@
 								addPost('_csrftoken', $ig->client->getToken())->
 								getDecodedResponse();
 			try {
+				$text = "customResponse is ".print_r($customResponse, true).".".PHP_EOL;
+				log_it($login_attempt_log_file, $text, true, __LINE__-1);
+
 				if(isset($customResponse["status"]) && isset($customResponse["action"]) && $customResponse['status'] === 'ok' && $customResponse['action'] === 'close') {
 					exit();
 				}
@@ -169,6 +172,9 @@
 												addPost('_uid', $ig->account_id)->
 												addPost('_csrftoken', $ig->client->getToken())->
 												getDecodedResponse();
+
+							$text = "customResponse is ".print_r($customResponse, true).".".PHP_EOL;
+							log_it($login_attempt_log_file, $text, true, __LINE__-1);
 
 							if($customResponse && isset($customResponse["action"])&& isset($customResponse["status"])) {
 								if($customResponse["action"] == "close" && $customResponse["status"] == "ok") {
