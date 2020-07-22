@@ -9,6 +9,8 @@
 	$general_error_log_file = "fatals.txt";
 	$loop_error_log_file = "errors.txt";
 
+	$users_loop_delay = 3; // in seconds, php script system sleep time
+
 	$verification_method = 1; 	//0 = SMS, 1 = Email
 
 	class ExtendedInstagram extends \InstagramAPI\Instagram {
@@ -50,11 +52,22 @@
 				$userID = $ig->people->getUserIdForName($storiesUserName);
 			}
 			catch(\Exception $e){
-				echo 'Exception '.$storiesUserName.PHP_EOL;
-				
-				$response1 = $e->getResponse();
-				$get_message = $e->getMessage();
-				$error_type = $response1->getErrorType();
+				if($e instanceOf InstagramAPI\Exception\NotFoundException) {
+					$text = 'User '.$storiesUserName.' not found skipping'.PHP_EOL;
+					log_it($loop_error_log_file, $text, true, __LINE__-1);
+					sleep($users_loop_delay);
+					continue;
+				}
+
+				$text = 'Exception on '.$storiesUserName.PHP_EOL;
+				log_it($loop_error_log_file, $text, true, __LINE__-1);
+
+				$text = "e is ".print_r($e, true).".".PHP_EOL;
+				log_it($loop_error_log_file, $text, true, __LINE__-1);
+
+				$response1 = method_exists($e, 'getResponse') ? $e->getResponse() : null;
+				$get_message = method_exists($e, 'getMessage') ? $e->getMessage() : null;
+				$error_type = method_exists($response1, 'getErrorType') ? $response1->getErrorType() : null;
 
 				$text = "Fatal error".PHP_EOL;
 				log_it($loop_error_log_file, $text, true, __LINE__-1);
@@ -68,8 +81,7 @@
 				$text = "response1 is ".print_r($response1, true).".".PHP_EOL;
 				log_it($loop_error_log_file, $text, true, __LINE__-1);
 
-				$text = "e is ".print_r($e, true).".".PHP_EOL;
-				log_it($loop_error_log_file, $text, true, __LINE__-1);
+				sleep($users_loop_delay);
 				continue;
 			}
 			$storyFeed = $ig->story->getUserStoryFeed($userID);
@@ -77,12 +89,13 @@
 			$storyReel = $storyFeed->getReel();
 			if(!$storyReel){
 				// echo 'Here is nothing in '.$storiesUserName.' stories'.PHP_EOL;
+				sleep($users_loop_delay);
 				continue;
 			}
 			$storyItems = $storyReel->getItems();
 			$storyCount= count($storyItems);
 			$mediaFiles = [];
-			
+
 			for ($i=0,$tempval; $i < $storyCount; $i++) {
 				$item = $storyItems[$i];
 				$itemDate = date('Y_m_d_H_i_s', $item->getTakenAt());
@@ -90,7 +103,6 @@
 				else $mediaUrl = $item->getVideoVersions()[0]->getUrl();
 				$itemId = sprintf('%s_%s_%s_',$storiesUserName, $itemDate, $item->getId());
 				$mediaFiles[$itemId] = ['taken_at' => $item->getTakenAt(),'url' => $mediaUrl];
-				
 			}
 			foreach ($mediaFiles as $mediaId => $mediaInfo) {
 				$mediaUrl = $mediaInfo['url'];
@@ -101,13 +113,22 @@
 					if (is_file($filePath))touch($filePath, $mediaInfo['taken_at']);
 				}
 			}
-			sleep(2);
+			sleep($users_loop_delay);
 		}
 	}
 	catch (\Exception $exception) {
-		$response = $exception->getResponse();
-		$get_message = $exception->getMessage();
-		$error_type = $response->getErrorType();
+		if($exception instanceOf InstagramAPI\Exception\ThrottledException) {
+			$text = 'Too many api requests, $exception is '.print_r($exception, true).'.'.PHP_EOL;
+			log_it($general_error_log_file, $text, true, __LINE__-1);
+			return;
+		}
+
+		$text = "exception is ".print_r($exception, true).".".PHP_EOL;
+		log_it($general_error_log_file, $text, true, __LINE__-1);
+
+		$response = method_exists($exception, 'getResponse') ? $exception->getResponse() : null;
+		$get_message = method_exists($exception, 'getMessage') ? $exception->getResponse() : null;
+		$error_type = method_exists($response, 'getErrorType') ? $response->getErrorType() : null;
 
 		$text = "Fatal error".PHP_EOL;
 		log_it($general_error_log_file, $text, true, __LINE__-1);
@@ -121,11 +142,9 @@
 		$text = "response is ".print_r($response, true).".".PHP_EOL;
 		log_it($general_error_log_file, $text, true, __LINE__-1);
 
-		$text = "exception is ".print_r($exception, true).".".PHP_EOL;
-		log_it($general_error_log_file, $text, true, __LINE__-1);
 
 		// If error_type is checkpoint_challenge_required then we need try to pass challenge
-		if ($response->getErrorType() === 'checkpoint_challenge_required') {
+		if ($error_type === 'checkpoint_challenge_required') {
 			sleep(3);
 			// Getting api_path key from challenge array, removing first slash for future append
 			$checkApiPath = substr($response->getChallenge()->getApiPath(), 1);
@@ -207,14 +226,18 @@
 				else {
 					$text = "Something went wrong".PHP_EOL;
 					log_it($login_attempt_log_file, $text, true, __LINE__-1);
+
 					$text = "Response is".print_r($customResponse, true).PHP_EOL;
 					log_it($login_attempt_log_file, $text, true, __LINE__-1);
 				}
 			}
 			catch ( Exception $ex ) {
-				$response = $ex->getResponse();
-				$get_message = $ex->getMessage();
-				$error_type = $response->getErrorType();
+				$text = "exception is ".print_r($ex, true).".".PHP_EOL;
+				log_it($general_error_log_file, $text, true, __LINE__-1);
+
+				$response = method_exists($ex, 'getResponse') ? $ex->getResponse() : null;
+				$get_message = method_exists($ex, 'getMessage') ? $ex->getMessage() : null;
+				$error_type = method_exists($response, 'getErrorType') ? $response->getErrorType() : null;
 
 				$text = "Fatal error".PHP_EOL;
 				log_it($general_error_log_file, $text, true, __LINE__-1);
@@ -226,9 +249,6 @@
 				log_it($general_error_log_file, $text, true, __LINE__-1);
 
 				$text = "response is ".print_r($response, true).".".PHP_EOL;
-				log_it($general_error_log_file, $text, true, __LINE__-1);
-
-				$text = "exception is ".print_r($ex, true).".".PHP_EOL;
 				log_it($general_error_log_file, $text, true, __LINE__-1);
 			}
 		}
